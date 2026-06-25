@@ -362,7 +362,8 @@ export default function App() {
       </section>
 
       {/* SECTION - Visit Our Academy */}
-      <section style={{ padding: '60px 24px', backgroundColor: 'white' }}>
+      {(activeView === 'home' || activeView === 'contact') && (
+        <section style={{ padding: '60px 24px', backgroundColor: 'white' }}>
         <div className="visit-section-grid" style={{ maxWidth: '1100px', margin: '0 auto' }}>
           
           {/* Left Side */}
@@ -440,6 +441,7 @@ export default function App() {
 
         </div>
       </section>
+      )}
 
       {/* FOOTER AREA - Displaying brand and navigation links on every single view with blue-900 background */}
       <footer className="bg-[#1e3a8a] py-12 px-6 sm:px-12 text-left text-white">
