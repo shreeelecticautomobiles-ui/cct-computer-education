@@ -84,6 +84,34 @@ export default function App() {
     };
   }, [activeView]);
 
+  // Keep navbar always visible on scroll and manage body classes
+  useEffect(() => {
+    const handleScroll = () => {
+      const navbar = document.querySelector('.navbar, header') as HTMLElement;
+      if (navbar) {
+        navbar.style.position = 'fixed';
+        navbar.style.top = '0';
+        navbar.style.left = '0';
+        navbar.style.width = '100%';
+        navbar.style.zIndex = '9999';
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Trigger initially
+
+    // Toggle announcement class on body
+    if (activeView === 'home') {
+      document.body.classList.add('has-announcement');
+    } else {
+      document.body.classList.remove('has-announcement');
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.body.classList.remove('has-announcement');
+    };
+  }, [activeView]);
+
   const openMenu = () => {
     const pos = window.scrollY || window.pageYOffset || 0;
     setScrollPosition(pos);
@@ -130,17 +158,17 @@ export default function App() {
             className="flex items-center gap-3.5 group text-left cursor-pointer focus:outline-none"
           >
             {/* Blue Squared Branding Badge */}
-            <div className="bg-[#1e40af] text-white rounded-xl h-11 w-11 flex flex-col items-center justify-center shadow-lg shadow-blue-900/20 select-none shrink-0 border border-blue-700 group-hover:scale-105 transition-transform duration-200">
+            <div className="bg-[#1e40af] text-white rounded-xl h-11 w-11 flex flex-col items-center justify-center shadow-lg shadow-blue-900/20 select-none shrink-0 border border-blue-700 group-hover:scale-105 transition-transform duration-200 navbar-logo-icon">
               <span className="text-[15px] font-black tracking-tighter leading-none">CCT</span>
               <span className="text-[6.5px] font-black uppercase tracking-widest mt-0.5 opacity-90 leading-none">Delhi</span>
             </div>
             
             {/* Title Typography in Uppercase per spec */}
             <div className="flex flex-col">
-              <span className="text-sm sm:text-md md:text-lg font-black tracking-tight text-[#0f172a] uppercase leading-none navbar-logo-text">
+              <span className="text-sm sm:text-md md:text-lg font-black tracking-tight text-[#0f172a] uppercase leading-none navbar-logo-text navbar-logo-name">
                 CCT COMPUTER TRAINING
               </span>
-              <span className="text-[8px] sm:text-[9px] font-extrabold tracking-[0.16em] text-slate-500 uppercase mt-1 leading-none navbar-sub">
+              <span className="text-[8px] sm:text-[9px] font-extrabold tracking-[0.16em] text-slate-500 uppercase mt-1 leading-none navbar-sub navbar-logo-subtitle">
                 Govt. Regd: S/145 • ESTD 1996
               </span>
             </div>
@@ -290,6 +318,9 @@ export default function App() {
           )}
         </AnimatePresence>
       </header>
+
+      {/* Spacer to push content exactly below navbar on desktop */}
+      <div className="navbar-spacer" style={{ height: activeView === 'home' ? '110px' : '70px' }}></div>
 
       {/* Scrolling Announcement Banner on the Home page at the very top (below the navbar) */}
       {activeView === 'home' && (
