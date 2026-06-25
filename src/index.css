@@ -1,0 +1,466 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box !important;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-display);
+}
+
+.visit-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.visit-card {
+  transition: all 0.25s ease-in-out;
+}
+
+.visit-card:hover {
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
+}
+
+@media (max-width: 768px) {
+  .visit-section-grid {
+    grid-template-columns: 1fr;
+  }
+  .visit-section-map {
+    height: 280px !important;
+    margin-top: 24px;
+  }
+}
+
+/* ==========================================
+   MOBILE RESPONSIVENESS AND SMOOTH ANIMATIONS
+   ========================================== */
+
+/* 1. Show hero image on mobile — make it visible */
+@media (max-width: 768px) {
+  .hero-image {
+    display: block !important;
+    width: 100% !important;
+    height: 220px !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+    border-radius: 12px !important;
+    margin-top: 20px !important;
+    border: 2px solid #bfdbfe !important;
+  }
+}
+
+/* 2. Fix hero section desktop & generic layout */
+.hero-section {
+  padding-top: 40px !important;
+  padding-bottom: 60px !important;
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 40px !important;
+  align-items: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
+.hero-wrapper {
+  overflow: visible !important;
+  height: auto !important;
+  padding-bottom: 0 !important;
+}
+
+.announcement-bar {
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+  position: relative !important;
+}
+
+.stats-section {
+  clear: both !important;
+  position: relative !important;
+  z-index: 1 !important;
+  margin-top: 0 !important;
+}
+
+/* 2.5. Fix hero section mobile layout */
+@media (max-width: 768px) {
+  .hero-section {
+    grid-template-columns: 1fr !important;
+    padding: 24px 16px 40px !important;
+    gap: 20px !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: grid !important;
+  }
+  .hero-text {
+    order: 1 !important;
+    text-align: center !important;
+  }
+  .hero-image-container {
+    order: 2 !important;
+    width: 100% !important;
+    display: block !important;
+  }
+  .hero-headline {
+    font-size: clamp(1.8rem, 7vw, 2.5rem) !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+  }
+  .hero-subtext {
+    font-size: 15px !important;
+    text-align: center !important;
+    color: #374151 !important;
+  }
+  .hero-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .hero-buttons a, .hero-buttons button {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 16px 12px !important;
+    font-size: 15px !important;
+    display: block !important;
+  }
+  .hero-badge {
+    text-align: center !important;
+    margin: 0 auto 16px !important;
+    display: inline-block !important;
+  }
+}
+
+/* 3. Fix stats bar on mobile */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0 !important;
+    padding: 24px 16px !important;
+  }
+  .stat-card {
+    padding: 16px 8px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  }
+  .stat-card:last-child {
+    grid-column: span 2 !important;
+    border-bottom: none !important;
+  }
+  .stat-number {
+    font-size: 1.8rem !important;
+  }
+  .stat-label {
+    font-size: 10px !important;
+  }
+}
+
+/* 4. Fix enquiry form on mobile */
+@media (max-width: 768px) {
+  #enquiry-form {
+    padding: 40px 16px !important;
+  }
+  #enquiry-form input,
+  #enquiry-form select,
+  #enquiry-form button {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+  }
+}
+
+/* 5. Fix director section on mobile */
+@media (max-width: 768px) {
+  .director-section {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+  }
+  .director-photo {
+    margin: 0 auto 20px !important;
+  }
+  .director-stats {
+    justify-content: center !important;
+  }
+}
+
+/* 6. Fix course cards on mobile */
+@media (max-width: 768px) {
+  .courses-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 16px !important;
+  }
+  .course-card {
+    padding: 20px !important;
+  }
+}
+
+/* 7. Fix career cards on mobile */
+@media (max-width: 768px) {
+  .career-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 0 16px !important;
+  }
+}
+
+/* 8. Fix reviews section on mobile */
+@media (max-width: 768px) {
+  .reviews-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 16px !important;
+  }
+}
+
+/* 9. Fix visit section on mobile */
+@media (max-width: 768px) {
+  .visit-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .visit-map {
+    height: 250px !important;
+    margin-top: 24px !important;
+  }
+}
+
+/* 10. Fix footer on mobile */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    text-align: center !important;
+  }
+  .footer-cta a {
+    width: 100% !important;
+    display: block !important;
+    text-align: center !important;
+  }
+}
+
+/* 11. Fix announcement bar on mobile */
+@media (max-width: 768px) {
+  .announcement-bar {
+    font-size: 11px !important;
+    padding: 8px 0 !important;
+  }
+}
+
+/* 12. Fix navbar on mobile */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 16px !important;
+  }
+  .navbar-logo-text {
+    font-size: 12px !important;
+  }
+  .navbar-sub {
+    font-size: 9px !important;
+  }
+}
+
+/* 13. Add smooth scroll animations — apply to every section */
+section, .course-card, .stat-card, .review-card, .career-card, .faq-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease !important;
+}
+
+section.animate-in,
+.course-card.animate-in,
+.stat-card.animate-in,
+.review-card.animate-in,
+.career-card.animate-in,
+.faq-item.animate-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.course-card:nth-child(2) { transition-delay: 0.1s !important; }
+.course-card:nth-child(3) { transition-delay: 0.2s !important; }
+.course-card:nth-child(4) { transition-delay: 0.3s !important; }
+
+.career-card:nth-child(2) { transition-delay: 0.05s !important; }
+.career-card:nth-child(3) { transition-delay: 0.1s !important; }
+.career-card:nth-child(4) { transition-delay: 0.15s !important; }
+
+/* 14. Add button hover and tap animations */
+.btn-primary, button[type="submit"], a[href*="tel"], a[href*="wa.me"] {
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.btn-primary:hover, button[type="submit"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(30,64,175,0.3) !important;
+}
+.btn-primary:active, button[type="submit"]:active {
+  transform: translateY(0) !important;
+}
+
+/* 15. Add card hover animations */
+.course-card, .review-card, .career-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+.course-card:hover, .review-card:hover, .career-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 12px 40px rgba(30,64,175,0.15) !important;
+  border-color: #1e40af !important;
+}
+
+/* 16. Make sure sticky mobile bottom bar works properly */
+
+/* 17. Global mobile fixes */
+@media (max-width: 768px) {
+  section {
+    padding: 32px 16px !important;
+  }
+  h2 {
+    font-size: clamp(1.4rem, 5vw, 2rem) !important;
+  }
+  p {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* 18. Faculty section styles */
+.faculty-section {
+  padding: 60px 24px;
+  background: #f8fafc;
+}
+
+.faculty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.faculty-card {
+  background: white;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.faculty-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  overflow: hidden;
+  border: 3px solid #bfdbfe;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faculty-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.photo-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  margin: 0 auto;
+}
+
+.faculty-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.faculty-title {
+  font-size: 13px;
+  color: #1e40af;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.faculty-exp {
+  font-size: 12px;
+  color: #6b7280;
+  background: #f0f9ff;
+  padding: 4px 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+/* Hover effects only on non-touch (hover-capable) devices */
+@media (hover: hover) {
+  .faculty-card:hover {
+    border-color: #1e40af !important;
+    box-shadow: 0 8px 30px rgba(30,64,175,0.15) !important;
+    transform: translateY(-4px) !important;
+  }
+}
+
+/* Mobile specific styling rules as per constraints */
+@media (max-width: 768px) {
+  .faculty-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+  .faculty-card {
+    padding: 16px !important;
+  }
+  .faculty-photo, .photo-placeholder {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  .photo-placeholder {
+    font-size: 20px !important;
+  }
+  .faculty-name {
+    font-size: 14px !important;
+  }
+  .faculty-card:active {
+    background-color: #eff6ff !important;
+    border-color: #1e40af !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .faculty-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
