@@ -1,0 +1,6 @@
+{
+  "name": "CCT Computer Education",
+  "description": "Career-ready computer education, interactive labs, and master certification tracks in New Delhi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
