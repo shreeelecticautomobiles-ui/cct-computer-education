@@ -161,14 +161,13 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               Delhi Govt. Registered • Est. 1996 • Regd: S/145
             </span>
             
-            <h1 className="text-4xl sm:text-6xl font-black text-[#0f172a] uppercase tracking-tight leading-[1.1] sm:leading-none w-full hero-headline">
-              Start Your <br className="hidden sm:block" />
-              <span className="relative inline-block pb-1.5 border-b-[6px] sm:border-b-[10px] border-[#bfdbfe]">
-                <span className="text-[#1e40af] mr-2">Computer Career</span>Today
-              </span>
+            <h1 className="hero-headline text-[#0f172a] uppercase">
+              START YOUR<br />
+              <span className="text-[#1e40af]">COMPUTER CAREER</span><br />
+              TODAY
             </h1>
             
-            <p className="text-slate-600 font-semibold text-sm sm:text-base leading-relaxed max-w-2xl hero-subtext">
+            <p className="hero-subtext text-slate-600 font-semibold leading-relaxed max-w-2xl">
               29 years of trusted computer education in Madangir, South Delhi. Certified courses, experienced faculty, 1:1 computer ratio.
             </p>
 
@@ -182,7 +181,7 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               </a>
               <a
                 href="tel:8527208085"
-                className="w-full sm:w-auto border-2 border-[#1e40af] hover:bg-[#1e40af] hover:text-white text-[#1e40af] bg-transparent font-black text-xs uppercase tracking-widest px-8 py-4 rounded-lg text-center transition min-h-[44px] btn-primary"
+                className="w-full sm:w-auto border-2 border-[#1e40af] hover:bg-[#1e40af] hover:text-white text-[#1e40af] bg-transparent font-black text-xs uppercase tracking-widest px-8 py-4 rounded-lg text-center transition min-h-[44px] btn-secondary"
               >
                 Call Now: 8527208085
               </a>
