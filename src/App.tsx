@@ -567,31 +567,33 @@ export default function App() {
         </div>
       </footer>
 
-      {/* FLOATING DIRECT CONTACT CALL AND WHATSAPP BUTTONS */}
-      {/* WHATSAPP FLOATING BUTTON (STICKY WIDGET ON ALL PAGES - links to wa.me/918527208085) */}
+      {/* FLOATING WHATSAPP BUTTON (NO CALL FLOATING BUTTON) */}
       <a
         href="https://wa.me/918527208085"
         target="_blank"
         rel="noopener noreferrer"
-        style={{ bottom: '20px', right: '20px' }}
-        className="flex fixed h-12 w-12 bg-[#25D366] text-white rounded-full items-center justify-center shadow-lg hover:bg-[#20ba5a] transition duration-250 hover:scale-110 active:scale-95 z-[999] group cursor-pointer"
+        className="whatsapp-float hover:scale-110 active:scale-95 transition-transform duration-200"
+        style={{
+          position: 'fixed',
+          bottom: '80px',
+          right: '20px',
+          width: '56px',
+          height: '56px',
+          background: '#25d366',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 12px rgba(37,211,102,0.4)',
+          zIndex: 9997,
+          textDecoration: 'none',
+        }}
         title="Chat on WhatsApp"
         id="floating-whatsapp-widget"
       >
-        <svg viewBox="0 0 16 16" className="h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.948h.003c4.368 0 7.927-3.559 7.931-7.929a7.83 7.83 0 0 0-2.33-5.593m-5.601 11.89c-1.397-.001-2.77-.375-3.967-1.058l-.284-.168-2.934.77.784-2.858-.184-.294c-.752-1.196-1.149-2.583-1.149-4.01C1.22 4.01 4.265 1.01 8.006 1.011a7.7 7.7 0 0 1 5.421 2.261 7.68 7.68 0 0 1 2.27 5.438c-.004 3.743-3.048 6.743-6.797 6.743m3.714-5.233c-.22-.11-.1.3-1.3-.649-.12-.06-.2-.09-.3-.06-.09.03-.37.37-.46.49-.09.11-.19.13-.37.04-1.847-.923-2.327-1.37-3.202-2.87-.1-.18 0-.28.1-.38.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.07-.12.03-.23-.02-.33-.05-.11-.46-1.11-.63-1.53-.18-.43-.37-.36-.5-.36-.12 0-.27-.01-.42-.01-.15 0-.38.06-.58.29-.2.23-.78.76-.78 1.86s.8 2.15.91 2.3c.11.15 1.568 2.4 3.8 3.361.53.23.94.37 1.26.47.54.17 1.03.15 1.41.09.43-.07 1.3-.53 1.48-1.04.18-.52.18-.97.12-1.04-.06-.07-.2-.11-.42-.22" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30">
+          <path fill="white" d="M24 4C12.95 4 4 12.95 4 24c0 3.6.95 7 2.6 9.95L4 44l10.35-2.55C17.1 43.1 20.45 44 24 44c11.05 0 20-8.95 20-20S35.05 4 24 4zm0 36c-3.15 0-6.1-.85-8.65-2.35l-.6-.35-6.3 1.55 1.6-6.1-.4-.65C8.9 29.9 8 27.05 8 24 8 15.16 15.16 8 24 8s16 7.16 16 16-7.16 16-16 16zm8.85-11.75c-.45-.25-2.7-1.35-3.15-1.5-.45-.15-.75-.25-1.1.25-.35.5-1.3 1.5-1.6 1.85-.3.35-.6.4-1.05.15-.45-.25-1.9-.7-3.6-2.25-1.35-1.2-2.25-2.65-2.5-3.1-.25-.45 0-.7.2-.9.2-.2.45-.5.65-.75.2-.25.25-.45.4-.75.15-.3.05-.55-.05-.75-.1-.2-1.1-2.65-1.5-3.6-.4-.95-.8-.8-1.1-.8h-.95c-.3 0-.8.1-1.2.55-.4.45-1.55 1.5-1.55 3.7s1.6 4.3 1.8 4.6c.2.3 3.1 4.85 7.6 6.8 1.05.45 1.9.7 2.55.9 1.05.35 2 .3 2.75.2.85-.15 2.7-1.1 3.1-2.15.4-1.05.4-1.95.3-2.15-.1-.2-.4-.3-.85-.55z"/>
         </svg>
-      </a>
-
-      {/* CALL FLOATING BUTTON (STICKY WIDGET AT bottom: 80px) */}
-      <a
-        href="tel:8527208085"
-        style={{ bottom: '80px', right: '20px' }}
-        className="flex fixed h-12 w-12 bg-[#1e40af] text-white rounded-full items-center justify-center shadow-lg hover:bg-[#1d4ed8] transition duration-250 hover:scale-110 active:scale-95 z-[999] cursor-pointer"
-        title="Call CCT Support"
-        id="floating-call-widget"
-      >
-        <Phone className="h-5 w-5 text-white" />
       </a>
 
 
