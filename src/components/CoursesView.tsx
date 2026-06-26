@@ -4,10 +4,11 @@ import { BookOpen, Search, Laptop, Palette, Terminal, Settings, Settings2, Shiel
 
 export default function CoursesView() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'all' | 'career' | 'design' | 'programming' | 'general' | 'cad' | 'hardware' | 'special'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'ai' | 'career' | 'design' | 'programming' | 'general' | 'cad' | 'hardware' | 'special'>('all');
 
   const categories = [
     { id: 'all', name: 'All Categories' },
+    { id: 'ai', name: 'AI & Data Science' },
     { id: 'career', name: 'Career Courses' },
     { id: 'design', name: 'Designing Courses' },
     { id: 'programming', name: 'Programming Tech' },
@@ -18,6 +19,10 @@ export default function CoursesView() {
   ];
 
   const categoryImages: Record<string, { src: string; alt: string }> = {
+    ai: {
+      src: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=400',
+      alt: 'Futuristic abstract concept of artificial intelligence with bright neural networks and cyber circuitry'
+    },
     career: {
       src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=400',
       alt: 'Professional in clean office using MS Office applications on desktop computer'
@@ -47,6 +52,36 @@ export default function CoursesView() {
       alt: 'Collaborative group of Indian college students learning together at computers'
     },
   };
+
+  const aiCourses = [
+    {
+      title: 'Artificial Intelligence & Machine Learning Masterclass',
+      duration: '4 Month Course',
+      category: 'ai',
+      topics: [
+        'AI FOUNDATIONS', 'SUPERVISED & UNSUPERVISED LEARNING', 'NEURAL NETWORKS & DEEP LEARNING', 'NATURAL LANGUAGE PROCESSING (NLP)', 'GENERATIVE AI & LLMs', 'AI MODEL DEPLOYMENT & PROMPT ENGINEERING'
+      ],
+      tag: 'Trending Future Tech'
+    },
+    {
+      title: 'Data Science & Generative AI Specialist',
+      duration: '3 Month Course',
+      category: 'ai',
+      topics: [
+        'PYTHON FOR DATA SCIENCE', 'NUMPY & PANDAS ANALYSIS', 'DATA VISUALIZATION WITH MATPLOTLIB & SEABORN', 'PROMPT ENGINEERING & LLM APIs', 'RETRIEVAL-AUGMENTED GENERATION (RAG)', 'VECTOR DATABASES'
+      ],
+      tag: 'High Industry Demand'
+    },
+    {
+      title: 'Prompt Engineering & Modern AI Tools',
+      duration: '1 Month Crash Course',
+      category: 'ai',
+      topics: [
+        'AI AGENTS & CO-PILOTS', 'CHATGPT, CLAUDE, & GEMINI OPTIMIZATION', 'IMAGE GENERATION (MIDJOURNEY/STABLE DIFFUSION)', 'WORKFLOW AUTOMATION WITH AI', 'ETHICS & BIAS IN AI'
+      ],
+      tag: 'In-Demand Skill'
+    }
+  ];
 
   const careerCourses = [
     {
@@ -263,9 +298,13 @@ export default function CoursesView() {
     { name: 'Dream-Weaver Web Composer', duration: '1 Month' },
     { name: 'Computer Data Structures', duration: '1 Month' },
     { name: 'HTML Web Framework', duration: '1 Month' },
+    { name: 'AI Prompt Engineering Crash', duration: '2 Weeks' },
+    { name: 'Generative AI & LLM Basics', duration: '2 Weeks' },
+    { name: 'ChatGPT & Claude for Productivity', duration: '2 Weeks' },
   ];
 
   const courseGroups = [
+    { id: 'ai', name: 'AI & Data Science', list: aiCourses },
     { id: 'career', name: 'Career Courses', list: careerCourses },
     { id: 'design', name: 'Designing Courses', list: designCourses },
     { id: 'programming', name: 'Programming Languages', list: programmingCourses },

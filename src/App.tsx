@@ -169,7 +169,7 @@ export default function App() {
                 CCT COMPUTER TRAINING
               </span>
               <span className="text-[8px] sm:text-[9px] font-extrabold tracking-[0.16em] text-slate-500 uppercase mt-1 leading-none navbar-sub navbar-logo-subtitle">
-                Govt. Regd: S/145 • ESTD 1996
+                Govt. Regd. • ESTD 1996
               </span>
             </div>
           </button>
@@ -488,7 +488,7 @@ export default function App() {
             </div>
             
             <p className="text-xs text-blue-100/90 leading-relaxed font-semibold max-w-sm">
-              Delhi Goverment Registered Computer Institute S/145. Unleashing functional computing confidence and core coding certifications since 1996.
+              Delhi Government Registered Computer Institute. Unleashing functional computing confidence and core coding certifications since 1996.
             </p>
 
 
@@ -563,7 +563,7 @@ export default function App() {
               DIVYANSH WEB SERVICES
             </a>
           </p>
-          <p>DELHI GOVERNMENT REGISTERED • S/145</p>
+          <p>DELHI GOVERNMENT REGISTERED</p>
         </div>
       </footer>
 

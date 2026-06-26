@@ -23,7 +23,7 @@ export default function AboutView() {
     },
     {
       icon: <Shield className="h-6 w-6 text-[#1e40af]" />,
-      title: 'Govt. Registered (S/145)',
+      title: 'Govt. Registered',
       desc: 'Officially recognized, audited, and registered under the registration reference of Delhi Government.',
     },
     {
@@ -100,7 +100,7 @@ export default function AboutView() {
             </div>
             <div className="h-[2px] bg-slate-100 w-full" />
             <div className="py-2">
-              <span className="text-xl font-black text-[#0f172a] uppercase block">REGD S/145</span>
+              <span className="text-xl font-black text-[#0f172a] uppercase block">Govt. Registered</span>
               <span className="text-[10px] text-[#374151] uppercase tracking-widest font-mono font-bold mt-1 block">Delhi Govt Audit</span>
             </div>
           </div>

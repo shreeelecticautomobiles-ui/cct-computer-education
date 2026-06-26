@@ -40,7 +40,7 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
     },
     {
       q: "Do you provide a certificate after course completion?",
-      a: "Yes. CCT provides government recognized course completion certificates. Regd by Delhi Govt — S/145."
+      a: "Yes. CCT provides government recognized course completion certificates. Regd by Delhi Govt."
     },
     {
       q: "How much does a course cost?",
@@ -158,7 +158,7 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
           {/* Left Column Content */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 w-full hero-text">
             <span className="inline-block bg-[#dbeafe] border border-blue-200 rounded-full px-4 py-1.5 text-xs font-bold text-[#1e40af] hero-badge">
-              Delhi Govt. Registered • Est. 1996 • Regd: S/145
+              Delhi Govt. Registered • Est. 1996
             </span>
             
             <h1 className="hero-headline text-[#0f172a] uppercase">
@@ -665,8 +665,8 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
                 <div style={{ fontSize: '12px', color: '#374151' }}>Students Trained</div>
               </div>
               <div style={{ background: '#f0f9ff', padding: '12px 20px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontWeight: 900, color: '#1e40af', fontSize: '1.5rem' }}>S/145</div>
-                <div style={{ fontSize: '12px', color: '#374151' }}>Govt. Registered</div>
+                <div style={{ fontWeight: 900, color: '#1e40af', fontSize: '1.5rem' }}>Regd.</div>
+                <div style={{ fontSize: '12px', color: '#374151' }}>Govt. Certified</div>
               </div>
             </div>
           </div>
