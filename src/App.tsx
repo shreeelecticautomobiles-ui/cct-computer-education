@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Phone, MapPin, Menu, X, ArrowUpRight, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { fetchSheet } from './lib/sheets';
 
 // Import our new premium page components
 import HomeView from './components/HomeView';
@@ -16,6 +17,29 @@ export default function App() {
   const [servicesSubTab, setServicesSubTab] = useState<'services' | 'laptop-sale'>('services');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
+
+  const [announcementData, setAnnouncementData] = useState({
+    message1: '🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈',
+    message2: '📞 Call: 8527208085',
+    message3: '✅ Free Demo Class Available',
+    message4: '🎓 Delhi Govt Registered Since 1996',
+    bottomBannerText: '15 Days Free Classes After Course Completion — No Extra Charge • Estd 1996 • Call 8527208085 today to reserve your computer slot!'
+  });
+ 
+  useEffect(() => {
+    fetchSheet('announcement').then(rows => {
+      if (rows && rows[0]) {
+        const row = rows[0];
+        setAnnouncementData(prev => ({
+          message1: row['message1'] || prev.message1,
+          message2: row['message2'] || prev.message2,
+          message3: row['message3'] || prev.message3,
+          message4: row['message4'] || prev.message4,
+          bottomBannerText: row['bottomBannerText'] || prev.bottomBannerText,
+        }));
+      }
+    });
+  }, []);
 
   // Synchronize hash changes (e.g. #/laptop-sale) with activeView state
   useEffect(() => {
@@ -334,16 +358,16 @@ export default function App() {
         >
           <div style={{ display: 'flex', width: 'max-content', animation: 'marquee-continuous 25s linear infinite' }}>
             <div style={{ display: 'flex', flexShrink: 0, gap: '40px', paddingRight: '40px', fontSize: '13px', fontWeight: 'bold' }} className="uppercase">
-              <span>🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈</span>
-              <span>📞 Call: 8527208085</span>
-              <span>✅ Free Demo Class Available</span>
-              <span>🎓 Delhi Govt Registered Since 1996</span>
+              <span>{announcementData.message1}</span>
+              <span>{announcementData.message2}</span>
+              <span>{announcementData.message3}</span>
+              <span>{announcementData.message4}</span>
             </div>
             <div style={{ display: 'flex', flexShrink: 0, gap: '40px', paddingRight: '40px', fontSize: '13px', fontWeight: 'bold' }} className="uppercase">
-              <span>🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈</span>
-              <span>📞 Call: 8527208085</span>
-              <span>✅ Free Demo Class Available</span>
-              <span>🎓 Delhi Govt Registered Since 1996</span>
+              <span>{announcementData.message1}</span>
+              <span>{announcementData.message2}</span>
+              <span>{announcementData.message3}</span>
+              <span>{announcementData.message4}</span>
             </div>
           </div>
         </div>
@@ -388,7 +412,7 @@ export default function App() {
       {/* SPECIAL BOTTOM HIGHLIGHT NOTE - Renders bottom of every page */}
       <section className="bg-[#1e40af] text-white py-4.5 px-6 sm:px-12 text-center uppercase tracking-wider font-sans font-black text-xs sm:text-sm border-t border-slate-200 select-none">
         <marquee scrollamount="4" className="w-full">
-          15 Days Free Classes After Course Completion — No Extra Charge • Estd 1996 • Call 8527208085 today to reserve your computer slot!
+          {announcementData.bottomBannerText}
         </marquee>
       </section>
 
