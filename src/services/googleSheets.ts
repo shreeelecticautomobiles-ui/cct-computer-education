@@ -1,8 +1,9 @@
-import { SheetCourse, SheetCrashCourse, LaptopSaleInfo } from '../types';
+import { SheetCourse, SheetCrashCourse, LaptopSaleInfo, Announcement } from '../types';
 
 const MAIN_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=0&single=true&output=csv';
 const CRASH_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1682720920&single=true&output=csv';
 const LAPTOP_SALE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=2144170283&single=true&output=csv';
+const ANNOUNCEMENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=675698559&single=true&output=csv';
 
 
 const categoryMap: Record<string, string> = {
@@ -495,6 +496,108 @@ export async function fetchLaptopSaleInfo(): Promise<LaptopSaleInfo> {
   } catch (error) {
     console.error('Failed to fetch laptop sale info from Google Sheets. Using fallback data.', error);
     return FALLBACK_LAPTOP_SALE_INFO;
+  }
+}
+
+export const FALLBACK_ANNOUNCEMENTS: Announcement[] = [
+  {
+    id: '1',
+    message: '🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈',
+    active: true,
+    sortOrder: 1
+  },
+  {
+    id: '2',
+    message: '📞 Call: 8527208085',
+    active: true,
+    sortOrder: 2
+  },
+  {
+    id: '3',
+    message: '✅ Free Demo Class Available',
+    active: true,
+    sortOrder: 3
+  },
+  {
+    id: '4',
+    message: '🎓 Delhi Govt Registered Since 1996',
+    active: true,
+    sortOrder: 4
+  }
+];
+
+export async function fetchAnnouncements(): Promise<Announcement[]> {
+  try {
+    const response = await fetch(ANNOUNCEMENTS_CSV_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error fetching announcements: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    if (rows.length < 2) {
+      return FALLBACK_ANNOUNCEMENTS;
+    }
+
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+
+    // Format 1: id,message,active,sortOrder
+    if (headers.includes('message')) {
+      const idIdx = headers.indexOf('id');
+      const msgIdx = headers.indexOf('message');
+      const activeIdx = headers.indexOf('active');
+      const sortIdx = headers.indexOf('sortorder');
+
+      const announcements: Announcement[] = [];
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.length === 0) continue;
+        
+        const id = idIdx !== -1 && row[idIdx] ? row[idIdx] : String(i);
+        const message = msgIdx !== -1 && row[msgIdx] ? row[msgIdx] : '';
+        const activeStr = activeIdx !== -1 && row[activeIdx] ? row[activeIdx].trim().toLowerCase() : 'true';
+        const active = activeStr === 'true' || activeStr === 'yes' || activeStr === '1';
+        const sortOrder = sortIdx !== -1 && row[sortIdx] ? parseInt(row[sortIdx], 10) : i;
+
+        if (message) {
+          announcements.push({
+            id,
+            message,
+            active,
+            sortOrder: isNaN(sortOrder) ? i : sortOrder
+          });
+        }
+      }
+
+      return announcements
+        .filter(a => a.active)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+    } else {
+      // Format 2: message1,message2,message3,message4,bottomBanner (or general single row)
+      const dataRow = rows[1];
+      const announcements: Announcement[] = [];
+
+      for (let i = 0; i < dataRow.length; i++) {
+        const headerName = headers[i] || '';
+        // Only map message1, message2, message3, message4 as sliding announcements (skip bottomBanner if desired, or skip any row header with "banner")
+        if ((headerName.startsWith('message') || headerName.includes('msg') || !headerName.includes('banner')) && dataRow[i]) {
+          announcements.push({
+            id: String(i + 1),
+            message: dataRow[i],
+            active: true,
+            sortOrder: i + 1
+          });
+        }
+      }
+
+      if (announcements.length > 0) {
+        return announcements;
+      }
+    }
+
+    return FALLBACK_ANNOUNCEMENTS;
+  } catch (error) {
+    console.error('Failed to fetch announcements from Google Sheets. Using fallback data.', error);
+    return FALLBACK_ANNOUNCEMENTS;
   }
 }
 

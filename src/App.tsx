@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Phone, MapPin, Menu, X, ArrowUpRight, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { fetchAnnouncements } from './services/googleSheets';
+import { Announcement } from './types';
 
 // Import our new premium page components
 import HomeView from './components/HomeView';
@@ -16,6 +18,50 @@ export default function App() {
   const [servicesSubTab, setServicesSubTab] = useState<'services' | 'laptop-sale'>('services');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([
+    {
+      id: '1',
+      message: '🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈',
+      active: true,
+      sortOrder: 1
+    },
+    {
+      id: '2',
+      message: '📞 Call: 8527208085',
+      active: true,
+      sortOrder: 2
+    },
+    {
+      id: '3',
+      message: '✅ Free Demo Class Available',
+      active: true,
+      sortOrder: 3
+    },
+    {
+      id: '4',
+      message: '🎓 Delhi Govt Registered Since 1996',
+      active: true,
+      sortOrder: 4
+    }
+  ]);
+
+  useEffect(() => {
+    let active = true;
+    async function loadAnnouncements() {
+      try {
+        const data = await fetchAnnouncements();
+        if (active) {
+          setAnnouncements(data);
+        }
+      } catch (err) {
+        console.error('Failed to load announcements:', err);
+      }
+    }
+    loadAnnouncements();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Synchronize hash changes (e.g. #/laptop-sale) with activeView state
   useEffect(() => {
@@ -334,16 +380,14 @@ export default function App() {
         >
           <div style={{ display: 'flex', width: 'max-content', animation: 'marquee-continuous 25s linear infinite' }}>
             <div style={{ display: 'flex', flexShrink: 0, gap: '40px', paddingRight: '40px', fontSize: '13px', fontWeight: 'bold' }} className="uppercase">
-              <span>🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈</span>
-              <span>📞 Call: 8527208085</span>
-              <span>✅ Free Demo Class Available</span>
-              <span>🎓 Delhi Govt Registered Since 1996</span>
+              {announcements.map((ann) => (
+                <span key={ann.id}>{ann.message}</span>
+              ))}
             </div>
             <div style={{ display: 'flex', flexShrink: 0, gap: '40px', paddingRight: '40px', fontSize: '13px', fontWeight: 'bold' }} className="uppercase">
-              <span>🖥️ Used Laptops Starting ₹6,500 • 1 Month Warranty • 👉 Click here to view inventory 👈</span>
-              <span>📞 Call: 8527208085</span>
-              <span>✅ Free Demo Class Available</span>
-              <span>🎓 Delhi Govt Registered Since 1996</span>
+              {announcements.map((ann) => (
+                <span key={`${ann.id}-duplicate`}>{ann.message}</span>
+              ))}
             </div>
           </div>
         </div>

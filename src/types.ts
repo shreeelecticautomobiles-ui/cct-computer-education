@@ -63,4 +63,11 @@ export interface LaptopSaleInfo {
   warranty: string;
 }
 
+export interface Announcement {
+  id: string;
+  message: string;
+  active: boolean;
+  sortOrder: number;
+}
+
 
