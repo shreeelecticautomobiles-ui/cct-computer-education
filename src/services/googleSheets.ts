@@ -1,7 +1,9 @@
-import { SheetCourse, SheetCrashCourse } from '../types';
+import { SheetCourse, SheetCrashCourse, LaptopSaleInfo } from '../types';
 
 const MAIN_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=0&single=true&output=csv';
 const CRASH_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1682720920&single=true&output=csv';
+const LAPTOP_SALE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=2144170283&single=true&output=csv';
+
 
 const categoryMap: Record<string, string> = {
   'AI & Data Science': 'ai',
@@ -454,3 +456,45 @@ export async function fetchCrashCourses(): Promise<SheetCrashCourse[]> {
     return FALLBACK_CRASH_COURSES;
   }
 }
+
+export const FALLBACK_LAPTOP_SALE_INFO: LaptopSaleInfo = {
+  price: '₹6,500',
+  warranty: '1 Month Testing Warranty'
+};
+
+export async function fetchLaptopSaleInfo(): Promise<LaptopSaleInfo> {
+  try {
+    const response = await fetch(LAPTOP_SALE_CSV_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error fetching laptop sale info: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    
+    let price = FALLBACK_LAPTOP_SALE_INFO.price;
+    let warranty = FALLBACK_LAPTOP_SALE_INFO.warranty;
+    
+    for (const row of rows) {
+      if (row.length < 2) continue;
+      
+      const firstCell = row[0].toLowerCase();
+      if (firstCell === 'price') {
+        continue;
+      }
+      
+      if (row[0]) {
+        price = row[0];
+      }
+      if (row[1]) {
+        warranty = row[1];
+      }
+      break;
+    }
+    
+    return { price, warranty };
+  } catch (error) {
+    console.error('Failed to fetch laptop sale info from Google Sheets. Using fallback data.', error);
+    return FALLBACK_LAPTOP_SALE_INFO;
+  }
+}
+

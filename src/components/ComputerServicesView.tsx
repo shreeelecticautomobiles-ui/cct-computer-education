@@ -1,23 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ShoppingBag, Wrench, Cpu, Phone, Check, MapPin, Sparkles } from 'lucide-react';
+import { fetchLaptopSaleInfo } from '../services/googleSheets';
 
 interface ComputerServicesViewProps {
   initialTab?: 'services' | 'laptop-sale';
 }
 
 export default function ComputerServicesView({ initialTab }: ComputerServicesViewProps) {
+  const [laptopInfo, setLaptopInfo] = useState({
+    price: '₹6,500',
+    warranty: '1 Month Testing Warranty'
+  });
+
+  useEffect(() => {
+    let active = true;
+    async function loadLaptopInfo() {
+      try {
+        const info = await fetchLaptopSaleInfo();
+        if (active) {
+          setLaptopInfo(info);
+        }
+      } catch (err) {
+        console.error('Error loading laptop sale info:', err);
+      }
+    }
+    loadLaptopInfo();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const services = [
     {
       icon: <span className="text-sm font-normal leading-none block">🖥️</span>,
       title: 'Used Laptop & Computer Sales',
       desc: (
         <span>
-          We sell quality tested second hand laptops and desktop computers starting at <span className="font-extrabold text-[#1e40af]">₹6,500</span>. Every system is thoroughly checked and comes with 1 month testing warranty. Best option for students looking for affordable computers.
+          We sell quality tested second hand laptops and desktop computers starting at <span className="font-extrabold text-[#1e40af]">{laptopInfo.price}</span>. Every system is thoroughly checked and comes with {laptopInfo.warranty.toLowerCase()}. Best option for students looking for affordable computers.
         </span>
       ),
       image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=400',
-      alt: 'Quality tested second hand laptops and desktop computers for sales starting at ₹6,500',
+      alt: `Quality tested second hand laptops and desktop computers for sales starting at ${laptopInfo.price}`,
       hasBadge: true
     },
     {
@@ -39,7 +63,7 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
   const features = [
     {
       icon: '💰',
-      title: 'Starting at ₹6,500',
+      title: `Starting at ${laptopInfo.price}`,
       desc: 'Get a fully working laptop or desktop computer at the most affordable price in Delhi. Best option for students and home users.',
     },
     {
@@ -49,8 +73,8 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
     },
     {
       icon: '🛡️',
-      title: '1 Month Testing Warranty',
-      desc: 'All systems come with 1 month testing warranty. If any issue occurs within 1 month, we will fix it at no extra cost.',
+      title: laptopInfo.warranty,
+      desc: `All systems come with ${laptopInfo.warranty.toLowerCase()}. If any issue occurs, we will fix it at no extra cost.`,
     },
     {
       icon: '👨‍💻',
@@ -143,10 +167,10 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
                       {item.hasBadge && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
                           <div style={{ background: '#1e40af', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', width: 'fit-content' }}>
-                            Starting <span style={{ fontSize: '22px', fontWeight: '900', color: 'white' }}>₹6,500</span>
+                            Starting <span style={{ fontSize: '22px', fontWeight: '900', color: 'white' }}>{laptopInfo.price}</span>
                           </div>
                           <div style={{ background: '#16a34a', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', width: 'fit-content' }}>
-                            1 Month Testing Warranty
+                            {laptopInfo.warranty}
                           </div>
                         </div>
                       )}
@@ -185,14 +209,14 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
                 Quality Used Laptops & Computers For Sale
               </h2>
               <p className="text-sm sm:text-base text-slate-600 font-semibold max-w-2xl mx-auto leading-relaxed">
-                Super affordable, thoroughly tested, and ready to use. Starting at just ₹6,500 with complete peace of mind.
+                Super affordable, thoroughly tested, and ready to use. Starting at just {laptopInfo.price} with complete peace of mind.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
                 <div className="bg-[#1e40af] text-white px-5 py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                  Price Starts: <span className="font-black text-base sm:text-lg">₹6,500</span>
+                  Price Starts: <span className="font-black text-base sm:text-lg">{laptopInfo.price}</span>
                 </div>
                 <div className="bg-[#16a34a] text-white px-5 py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                  1 Month Testing Warranty
+                  {laptopInfo.warranty}
                 </div>
               </div>
             </div>

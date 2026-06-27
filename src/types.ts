@@ -58,3 +58,9 @@ export interface SheetCrashCourse {
   sortOrder: number;
 }
 
+export interface LaptopSaleInfo {
+  price: string;
+  warranty: string;
+}
+
+
