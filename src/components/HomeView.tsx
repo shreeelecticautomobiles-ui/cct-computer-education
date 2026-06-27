@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Phone, MapPin, Star, ChevronDown, ChevronUp, ArrowRight, Award, Users, Monitor, Calendar, Sparkles, CheckCircle2, Camera } from 'lucide-react';
+import { fetchMainCourses, fetchLaptopSaleInfo } from '../services/googleSheets';
+import { SheetCourse, LaptopSaleInfo } from '../types';
 
 interface HomeViewProps {
   onNavigateToCourses: () => void;
@@ -12,8 +14,40 @@ interface HomeViewProps {
 export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, onNavigateToServices, onNavigateToGallery }: HomeViewProps) {
   // Frequently Asked Questions State
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [courses, setCourses] = useState<SheetCourse[]>([]);
+  const [laptopInfo, setLaptopInfo] = useState<LaptopSaleInfo>({
+    price: '₹6,500',
+    warranty: '1 Month Testing Warranty'
+  });
 
-  React.useEffect(() => {
+  useEffect(() => {
+    let active = true;
+    async function loadData() {
+      try {
+        const [mainData, saleData] = await Promise.all([
+          fetchMainCourses(),
+          fetchLaptopSaleInfo()
+        ]);
+        if (active) {
+          setCourses(mainData);
+          setLaptopInfo(saleData);
+        }
+      } catch (err) {
+        console.error('Error loading home data:', err);
+      }
+    }
+    loadData();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const careerCourses = courses.filter(c => c.categoryId === 'career');
+  const designCourses = courses.filter(c => c.categoryId === 'design');
+  const programmingCourses = courses.filter(c => c.categoryId === 'programming');
+  const cadTechnicalCourses = courses.filter(c => c.categoryId === 'cad' || c.categoryId === 'hardware');
+
+  useEffect(() => {
     document.querySelectorAll('.faculty-photo img').forEach(img => {
       const htmlImg = img as HTMLImageElement;
       htmlImg.onerror = function() {
@@ -299,17 +333,27 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', color: '#374151' }}
             >
               <option value="">Select Course You Are Interested In</option>
-              <option>Master in Software Engineering (1 Year)</option>
-              <option>Diploma in MS-Office (6 Month)</option>
-              <option>Graphics Designing & Multimedia</option>
-              <option>Certificate in Web Designing</option>
-              <option>C & C++ Programming</option>
-              <option>Advance Tally Course</option>
-              <option>Basic Computer Application</option>
-              <option>AutoCAD Course (3 Month)</option>
-              <option>Hardware & Repairing</option>
-              <option>Crash Course (1-4 Weeks)</option>
-              <option>O Level / BCA / MCA Coaching</option>
+              {courses.length > 0 ? (
+                courses.map((c) => (
+                  <option key={c.id} value={c.title}>
+                    {c.title} ({c.duration})
+                  </option>
+                ))
+              ) : (
+                <>
+                  <option>Master in Software Engineering (1 Year)</option>
+                  <option>Diploma in MS-Office (6 Month)</option>
+                  <option>Graphics Designing & Multimedia</option>
+                  <option>Certificate in Web Designing</option>
+                  <option>C & C++ Programming</option>
+                  <option>Advance Tally Course</option>
+                  <option>Basic Computer Application</option>
+                  <option>AutoCAD Course (3 Month)</option>
+                  <option>Hardware & Repairing</option>
+                  <option>Crash Course (1-4 Weeks)</option>
+                  <option>O Level / BCA / MCA Coaching</option>
+                </>
+              )}
               <option>Not Sure - Need Guidance</option>
             </select>
             <button 
@@ -499,10 +543,18 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               <div className="learns text-left mb-4">
                 <strong className="text-xs sm:text-sm text-slate-800 tracking-wide block mb-1">You Will Learn:</strong>
                 <ul>
-                  <li>MS Word, Excel, PowerPoint</li>
-                  <li>Tally & Financial Accounting</li>
-                  <li>Data Entry & Typing</li>
-                  <li>Internet & Email</li>
+                  {careerCourses.length > 0 ? (
+                    careerCourses.slice(0, 4).map((c, i) => (
+                      <li key={i}>{c.title}</li>
+                    ))
+                  ) : (
+                    <>
+                      <li>MS Word, Excel, PowerPoint</li>
+                      <li>Tally & Financial Accounting</li>
+                      <li>Data Entry & Typing</li>
+                      <li>Internet & Email</li>
+                    </>
+                  )}
                 </ul>
               </div>
               <div className="careers text-left">
@@ -525,10 +577,18 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               <div className="learns text-left mb-4">
                 <strong className="text-xs sm:text-sm text-slate-800 tracking-wide block mb-1">You Will Learn:</strong>
                 <ul>
-                  <li>CorelDraw & Photoshop</li>
-                  <li>Illustrator Grid Layouts</li>
-                  <li>Flash & Multimedia Production</li>
-                  <li>Desktop Publishing (DTP)</li>
+                  {designCourses.length > 0 ? (
+                    designCourses.slice(0, 4).map((c, i) => (
+                      <li key={i}>{c.title}</li>
+                    ))
+                  ) : (
+                    <>
+                      <li>CorelDraw & Photoshop</li>
+                      <li>Illustrator Grid Layouts</li>
+                      <li>Flash & Multimedia Production</li>
+                      <li>Desktop Publishing (DTP)</li>
+                    </>
+                  )}
                 </ul>
               </div>
               <div className="careers text-left">
@@ -551,10 +611,18 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               <div className="learns text-left mb-4">
                 <strong className="text-xs sm:text-sm text-slate-800 tracking-wide block mb-1">You Will Learn:</strong>
                 <ul>
-                  <li>C, C++, Java & Python</li>
-                  <li>Data Structures & OOPs</li>
-                  <li>Web Design (HTML, CSS)</li>
-                  <li>Programming Logic & Arrays</li>
+                  {programmingCourses.length > 0 ? (
+                    programmingCourses.slice(0, 4).map((c, i) => (
+                      <li key={i}>{c.title}</li>
+                    ))
+                  ) : (
+                    <>
+                      <li>C, C++, Java & Python</li>
+                      <li>Data Structures & OOPs</li>
+                      <li>Web Design (HTML, CSS)</li>
+                      <li>Programming Logic & Arrays</li>
+                    </>
+                  )}
                 </ul>
               </div>
               <div className="careers text-left">
@@ -577,10 +645,18 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
               <div className="learns text-left mb-4">
                 <strong className="text-xs sm:text-sm text-slate-800 tracking-wide block mb-1">You Will Learn:</strong>
                 <ul>
-                  <li>2D Drafting & Schematics</li>
-                  <li>3D CAD Projections</li>
-                  <li>Engineering Command Standards</li>
-                  <li>Real-world Blueprint Architecture</li>
+                  {cadTechnicalCourses.length > 0 ? (
+                    cadTechnicalCourses.slice(0, 4).map((c, i) => (
+                      <li key={i}>{c.title}</li>
+                    ))
+                  ) : (
+                    <>
+                      <li>2D Drafting & Schematics</li>
+                      <li>3D CAD Projections</li>
+                      <li>Engineering Command Standards</li>
+                      <li>Real-world Blueprint Architecture</li>
+                    </>
+                  )}
                 </ul>
               </div>
               <div className="careers text-left">
@@ -814,16 +890,16 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
                   <div style={{ background: '#1e40af', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, display: 'inline-block', width: 'fit-content' }}>
-                    Starting <span style={{ fontSize: '22px', fontWeight: '900', color: 'white' }}>₹6,500</span>
+                    Starting <span style={{ fontSize: '22px', fontWeight: '900', color: 'white' }}>{laptopInfo.price}</span>
                   </div>
                   <div style={{ background: '#16a34a', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, display: 'inline-block', width: 'fit-content' }}>
-                    1 Month Testing Warranty
+                    {laptopInfo.warranty}
                   </div>
                 </div>
 
                 <h3 className="text-lg font-black text-[#0f172a] uppercase group-hover:text-[#1e40af] transition-colors mb-2">Used Laptop & Computer Sales</h3>
                 <p className="text-xs text-slate-600 leading-relaxed font-semibold mb-4">
-                  Quality tested used laptops and desktop computers available starting from just <span style={{ fontSize: '22px', fontWeight: '900', color: '#1e40af' }}>₹6,500</span>. All systems come with 1 month testing warranty. Perfect for students and home use.
+                  Quality tested used laptops and desktop computers available starting from just <span style={{ fontSize: '22px', fontWeight: '900', color: '#1e40af' }}>{laptopInfo.price}</span>. All systems come with {laptopInfo.warranty.toLowerCase()}. Perfect for students and home use.
                 </p>
               </div>
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400 font-bold uppercase tracking-widest mt-auto">
