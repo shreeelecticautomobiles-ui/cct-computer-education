@@ -58,3 +58,45 @@ export interface SheetCrashCourse {
   sortOrder: number;
 }
 
+export interface SheetHero {
+  id: string;
+  title: string;
+  subtitle: string;
+  buttonText: string;
+  buttonLink: string;
+  imageUrl: string;
+  active: boolean;
+}
+
+export interface SheetLaptopFeature {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface SheetSupportCatalogue {
+  id: string;
+  imageUrl: string;
+  price: string;
+  warranty: string;
+  title: string;
+  description: string;
+  footerLeft: string;
+  footerRight: string;
+  buttonText: string;
+  buttonLink: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface SheetWhyBuy {
+  id: string;
+  text: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+
