@@ -36,3 +36,25 @@ export interface Testimonial {
   quote: string;
   batch: string;
 }
+
+export interface SheetCourse {
+  id: string;
+  category: string;
+  categoryId: string;
+  title: string;
+  tag: string;
+  duration: string;
+  topics: string[];
+  enrollLink: string;
+  active: boolean;
+  sortOrder: number;
+}
+
+export interface SheetCrashCourse {
+  id: string;
+  name: string;
+  duration: string;
+  active: boolean;
+  sortOrder: number;
+}
+

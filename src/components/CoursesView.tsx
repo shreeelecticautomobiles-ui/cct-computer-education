@@ -1,10 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { BookOpen, Search, Laptop, Palette, Terminal, Settings, Settings2, ShieldCheck, Tag, HelpCircle } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { fetchMainCourses, fetchCrashCourses } from '../services/googleSheets';
+import { SheetCourse, SheetCrashCourse } from '../types';
 
 export default function CoursesView() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'ai' | 'career' | 'design' | 'programming' | 'general' | 'cad' | 'hardware' | 'special'>('all');
+  const [courses, setCourses] = useState<SheetCourse[]>([]);
+  const [crashCourses, setCrashCourses] = useState<SheetCrashCourse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    async function loadData() {
+      try {
+        const [mainData, crashData] = await Promise.all([
+          fetchMainCourses(),
+          fetchCrashCourses()
+        ]);
+        if (active) {
+          setCourses(mainData);
+          setCrashCourses(crashData);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('Error loading courses:', err);
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    }
+    loadData();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const categories = [
     { id: 'all', name: 'All Categories' },
@@ -18,300 +49,15 @@ export default function CoursesView() {
     { id: 'special', name: 'College/CBSE Prep' },
   ];
 
-  const categoryImages: Record<string, { src: string; alt: string }> = {
-    ai: {
-      src: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=400',
-      alt: 'Futuristic abstract concept of artificial intelligence with bright neural networks and cyber circuitry'
-    },
-    career: {
-      src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=400',
-      alt: 'Professional in clean office using MS Office applications on desktop computer'
-    },
-    design: {
-      src: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=400',
-      alt: 'Creative professional designing on a computer monitor with color pallets and brush tools'
-    },
-    programming: {
-      src: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&q=80&w=400',
-      alt: 'Close up of programming lines of code on display screen with hands typing'
-    },
-    cad: {
-      src: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&q=80&w=400',
-      alt: 'AutoCAD blueprint layout showing 3D engineering parts and vectors'
-    },
-    general: {
-      src: 'https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?auto=format&fit=crop&q=80&w=400',
-      alt: 'Trainee student learning general computer fundamentals and data entry operation'
-    },
-    hardware: {
-      src: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?auto=format&fit=crop&q=80&w=400',
-      alt: 'Technical engineer repairing motherboard processor and testing microchips'
-    },
-    special: {
-      src: 'https://images.unsplash.com/photo-1522207182008-009f0129c71c?auto=format&fit=crop&q=80&w=400',
-      alt: 'Collaborative group of Indian college students learning together at computers'
-    },
-  };
-
-  const aiCourses = [
-    {
-      title: 'Artificial Intelligence & Machine Learning Masterclass',
-      duration: '4 Month Course',
-      category: 'ai',
-      topics: [
-        'AI FOUNDATIONS', 'SUPERVISED & UNSUPERVISED LEARNING', 'NEURAL NETWORKS & DEEP LEARNING', 'NATURAL LANGUAGE PROCESSING (NLP)', 'GENERATIVE AI & LLMs', 'AI MODEL DEPLOYMENT & PROMPT ENGINEERING'
-      ],
-      tag: 'Trending Future Tech'
-    },
-    {
-      title: 'Data Science & Generative AI Specialist',
-      duration: '3 Month Course',
-      category: 'ai',
-      topics: [
-        'PYTHON FOR DATA SCIENCE', 'NUMPY & PANDAS ANALYSIS', 'DATA VISUALIZATION WITH MATPLOTLIB & SEABORN', 'PROMPT ENGINEERING & LLM APIs', 'RETRIEVAL-AUGMENTED GENERATION (RAG)', 'VECTOR DATABASES'
-      ],
-      tag: 'High Industry Demand'
-    },
-    {
-      title: 'Prompt Engineering & Modern AI Tools',
-      duration: '1 Month Crash Course',
-      category: 'ai',
-      topics: [
-        'AI AGENTS & CO-PILOTS', 'CHATGPT, CLAUDE, & GEMINI OPTIMIZATION', 'IMAGE GENERATION (MIDJOURNEY/STABLE DIFFUSION)', 'WORKFLOW AUTOMATION WITH AI', 'ETHICS & BIAS IN AI'
-      ],
-      tag: 'In-Demand Skill'
-    }
-  ];
-
-  const careerCourses = [
-    {
-      title: 'Master in Software Engineering',
-      duration: '1 Year Program',
-      category: 'career',
-      topics: [
-        'Fundamental', 'Ms-Dos', 'Windows', 'Ms-Excel', 'Ms-Word', 'Power-point',
-        'Ms-Access', 'Page-Maker', 'Corel-Draw', 'PhotoShop', 'HTML', 'Tally',
-        'E-mail, Internet'
-      ],
-      tag: 'Best Placement Value'
-    },
-    {
-      title: 'Diploma in MS-Office',
-      duration: '6 Month Course',
-      category: 'career',
-      topics: [
-        'Fundamental', 'Ms-Dos', 'Windows', 'Ms-Excel', 'Ms-Word', 'Power-point',
-        'Ms-Access', 'Data-Entry', 'Typing Tutor', 'Internet'
-      ],
-      tag: 'Popular Core'
-    },
-    {
-      title: 'Special Course in MS-Office',
-      duration: '4 Month Course',
-      category: 'career',
-      topics: [
-        'Ms-Excel', 'Ms-Word', 'Power-point', 'Ms-Access', 'Internet'
-      ],
-      tag: 'Office Essential'
-    },
-    {
-      title: 'Diploma in DTP (Desktop Publishing)',
-      duration: '6 Month Course',
-      category: 'career',
-      topics: [
-        'Fundamental', 'Windows', 'Pagemaker', 'PhotoShop', 'illustrator',
-        'Corel-Draw', 'Typing'
-      ],
-      tag: 'Print & Layout'
-    },
-    {
-      title: 'Special Diploma in DTP',
-      duration: '4 Month Course',
-      category: 'career',
-      topics: [
-        'PhotoShop', 'Pagemaker', 'Corel-Draw', 'Internet'
-      ],
-      tag: 'Fast Layout'
-    },
-    {
-      title: 'Diploma in Financial Accounting',
-      duration: '6 Month Course',
-      category: 'career',
-      topics: [
-        'Windows', 'Excel', 'Busy', 'Internet', 'Typing', 'Taxes'
-      ],
-      tag: 'Industry Accounting'
-    },
-  ];
-
-  const designCourses = [
-    {
-      title: 'Graphics Designing & Multimedia',
-      duration: '6 Month Course',
-      category: 'design',
-      topics: [
-        'Core-Draw', 'Illustrator', 'Photoshop', 'Free Hand', 'Flash', 'Quark-express'
-      ],
-      tag: 'Creative Suite'
-    },
-    {
-      title: 'Certificate in Web Designing',
-      duration: '6 Month Course',
-      category: 'design',
-      topics: [
-        'Html/Dhtml', 'Frontpage', 'Flash', 'Dream Weaver', 'Photoshop', 'Flash-script'
-      ],
-      tag: 'Web Standard'
-    }
-  ];
-
-  const programmingCourses = [
-    {
-      title: 'C & C++ Programming',
-      duration: '3 Month Course',
-      category: 'programming',
-      topics: [
-        'DATA TYPES', 'ARRAY', 'POINTER', 'LOOPS', 'CLASS ETC.'
-      ],
-      tag: 'Core Engineering'
-    },
-    {
-      title: 'Python Programming',
-      duration: '3 Month Course',
-      category: 'programming',
-      topics: [
-        'VARIABLES & OPERATORS', 'CONDITIONAL LOGIC & LOOPS', 'FUNCTIONS & MODULES', 'OBJECT-ORIENTED PROGRAMMING', 'FILE HANDLING & APIs', 'DATA STRUCTURES'
-      ],
-      tag: 'Most Popular Tech'
-    },
-    {
-      title: 'Core & Advance Java',
-      duration: '3 Month Course',
-      category: 'programming',
-      topics: [
-        'JVM ARCHITECTURE', 'CLASSES & OBJECTS', 'INHERITANCE & POLYMORPHISM', 'EXCEPTION HANDLING', 'MULTITHREADING & COLLECTIONS', 'JDBC CONNECTIVITY'
-      ],
-      tag: 'Enterprise Standard'
-    },
-    {
-      title: 'Advance Tally Course',
-      duration: '4 Month Course',
-      category: 'programming',
-      topics: [
-        'ACCOUNTING', 'SALES TAX', 'INVENTORY', 'SERVICE TAX', 'GST',
-        'ADVANCE ACCOUNTING', 'PAY ROLL', 'BOM'
-      ],
-      tag: 'Tax Professional'
-    }
-  ];
-
-  const generalCourses = [
-    {
-      title: 'Basic Computer Application',
-      duration: '3 Month Course',
-      category: 'general',
-      topics: [
-        'Fundamental', 'Ms-Dos', 'Windows', 'Ms-Word', 'Power-Point', 'Typing',
-        'Printing Job work', 'Internet'
-      ],
-      tag: 'Absolute Starter'
-    },
-    {
-      title: 'Office Management',
-      duration: '4 Month Course',
-      category: 'general',
-      topics: [
-        'Fundamental', 'Ms-Word', 'Windows', 'Printing Job', 'Internet', 'E-mail',
-        'Printing Job work', 'Typing', 'Tally'
-      ],
-      tag: 'Business Office'
-    }
-  ];
-
-  const autocadCourses = [
-    {
-      title: 'AutoCAD Course',
-      duration: '3 Month Course',
-      category: 'cad',
-      topics: [
-        'Fundamental of cad', 'Menus', 'Commands', 'Drawing 2d', 'Drawing 3d', 'Project'
-      ],
-      tag: 'Engineering Drafts'
-    }
-  ];
-
-  const hardwareCourses = [
-    {
-      title: 'Special Course in Hardware',
-      duration: '4 Month Course',
-      category: 'hardware',
-      topics: [
-        'Fundamental of Hardware', 'Disk Operating System',
-        'Windows Instillation winxpwindows7,windows8,windows10',
-        'Assembling Of Computer', 'Trouble Shooting'
-      ],
-      tag: 'System Tech'
-    }
-  ];
-
-  const specialCourses = [
-    {
-      title: 'Special Coaching for O\'Level, BCA, MCA',
-      duration: 'Strategic Track',
-      category: 'special',
-      topics: [
-        'Strategic Programming Syllabus Training', 'Lab Assignment Completion Practice',
-        'Continuous Exam Support Panels'
-      ],
-      tag: 'University Coaching'
-    },
-    {
-      title: 'Computer Training for CBSE 10th & 12th Class',
-      duration: 'Board Exam Alignment',
-      category: 'special',
-      topics: [
-        'NCERT Programming Frameworks', 'CBSE Practice Projects Guidance', 'Mock Computer exams'
-      ],
-      tag: 'School Board High score'
-    },
-    {
-      title: 'Vocational Technical Training',
-      duration: 'Flexible Schedule',
-      category: 'special',
-      topics: [
-        'Job-oriented skills for fast livelihood security', 'Practical project log work certificate'
-      ],
-      tag: 'Livelihood Prep'
-    }
-  ];
-
-  const crashCoursesTable = [
-    { name: 'Windows Operating System', duration: '2 Weeks' },
-    { name: 'Tally Accounting software', duration: '1 Month' },
-    { name: 'CorelDraw Vector Layout', duration: '1 Month' },
-    { name: 'Pagemaker Printing Layout', duration: '1 Month' },
-    { name: 'Photoshop Image Editing', duration: '1 Month' },
-    { name: 'Illustrators Vector Drafting', duration: '1 Month' },
-    { name: 'Flash 2D Vector Animation', duration: '1 Month' },
-    { name: 'Internet Tools & Emailing', duration: '1 Week' },
-    { name: 'Quark-Express Layout system', duration: '1 Month' },
-    { name: 'Dream-Weaver Web Composer', duration: '1 Month' },
-    { name: 'Computer Data Structures', duration: '1 Month' },
-    { name: 'HTML Web Framework', duration: '1 Month' },
-    { name: 'AI Prompt Engineering Crash', duration: '2 Weeks' },
-    { name: 'Generative AI & LLM Basics', duration: '2 Weeks' },
-    { name: 'ChatGPT & Claude for Productivity', duration: '2 Weeks' },
-  ];
-
   const courseGroups = [
-    { id: 'ai', name: 'AI & Data Science', list: aiCourses },
-    { id: 'career', name: 'Career Courses', list: careerCourses },
-    { id: 'design', name: 'Designing Courses', list: designCourses },
-    { id: 'programming', name: 'Programming Languages', list: programmingCourses },
-    { id: 'cad', name: 'AutoCAD Courses', list: autocadCourses },
-    { id: 'general', name: 'General Courses', list: generalCourses },
-    { id: 'hardware', name: 'Hardware Courses', list: hardwareCourses },
-    { id: 'special', name: 'Special Courses', list: specialCourses },
+    { id: 'ai', name: 'AI & Data Science', list: courses.filter(c => c.categoryId === 'ai') },
+    { id: 'career', name: 'Career Courses', list: courses.filter(c => c.categoryId === 'career') },
+    { id: 'design', name: 'Designing Courses', list: courses.filter(c => c.categoryId === 'design') },
+    { id: 'programming', name: 'Programming Languages', list: courses.filter(c => c.categoryId === 'programming') },
+    { id: 'cad', name: 'AutoCAD Courses', list: courses.filter(c => c.categoryId === 'cad') },
+    { id: 'general', name: 'General Courses', list: courses.filter(c => c.categoryId === 'general') },
+    { id: 'hardware', name: 'Hardware Courses', list: courses.filter(c => c.categoryId === 'hardware') },
+    { id: 'special', name: 'Special Courses', list: courses.filter(c => c.categoryId === 'special') },
   ];
 
   const filteredGroups = courseGroups
@@ -325,6 +71,19 @@ export default function CoursesView() {
       return { ...group, list: filteredList };
     })
     .filter(group => group.list.length > 0);
+
+  if (isLoading) {
+    return (
+      <div className="bg-white text-slate-800 min-h-screen py-12 px-5 sm:py-20 sm:px-12 flex flex-col items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 border-4 border-[#1e40af] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs sm:text-sm text-slate-500 font-mono uppercase tracking-widest font-black animate-pulse">
+            Loading Course Directory...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white text-slate-800 min-h-screen py-12 px-5 sm:py-20 sm:px-12 selection:bg-[#1e40af] selection:text-white">
@@ -470,8 +229,10 @@ export default function CoursesView() {
                             {course.duration}
                           </span>
                           <a 
-                            href="tel:8527208085"
+                            href={course.enrollLink && course.enrollLink !== '#' ? course.enrollLink : 'tel:8527208085'}
                             className="bg-[#1e40af] hover:bg-blue-800 text-white font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-md transition duration-150 min-h-[32px] inline-flex items-center justify-center cursor-pointer"
+                            target={course.enrollLink && course.enrollLink !== '#' ? '_blank' : undefined}
+                            rel={course.enrollLink && course.enrollLink !== '#' ? 'noopener noreferrer' : undefined}
                           >
                             Enroll
                           </a>
@@ -518,7 +279,7 @@ export default function CoursesView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
-                {crashCoursesTable.map((item, index) => (
+                {crashCourses.map((item, index) => (
                   <tr 
                     key={index} 
                     className="hover:bg-blue-50/30 transition duration-150"
