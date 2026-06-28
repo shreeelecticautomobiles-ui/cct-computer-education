@@ -70,4 +70,34 @@ export interface Announcement {
   sortOrder: number;
 }
 
+export interface SheetService {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  active: boolean;
+  sortOrder: number;
+  price?: string;
+  warranty?: string;
+  badge1?: string;
+  badge2?: string;
+}
+
+export interface LaptopSaleCard {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  price?: string;
+  warranty?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  active: boolean;
+  sortOrder: number;
+  icon?: string;
+}
+
+
 

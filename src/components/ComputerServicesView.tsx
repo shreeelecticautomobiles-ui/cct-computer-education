@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ShoppingBag, Wrench, Cpu, Phone, Check, MapPin, Sparkles } from 'lucide-react';
-import { fetchLaptopSaleInfo } from '../services/googleSheets';
+import { fetchLaptopSaleInfo, fetchServices, fetchLaptopSales, FALLBACK_SERVICES, FALLBACK_LAPTOP_SALES } from '../services/googleSheets';
+import { SheetService, LaptopSaleCard } from '../types';
 
 interface ComputerServicesViewProps {
   initialTab?: 'services' | 'laptop-sale';
@@ -12,82 +13,39 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
     price: '₹6,500',
     warranty: '1 Month Testing Warranty'
   });
+  const [services, setServices] = useState<SheetService[]>(FALLBACK_SERVICES);
+  const [laptopSales, setLaptopSales] = useState<LaptopSaleCard[]>(FALLBACK_LAPTOP_SALES);
 
   useEffect(() => {
     let active = true;
-    async function loadLaptopInfo() {
+    async function loadAllData() {
       try {
-        const info = await fetchLaptopSaleInfo();
+        const [info, servicesData, salesData] = await Promise.all([
+          fetchLaptopSaleInfo(),
+          fetchServices(),
+          fetchLaptopSales()
+        ]);
         if (active) {
           setLaptopInfo(info);
+          setServices(servicesData);
+          setLaptopSales(salesData);
         }
       } catch (err) {
-        console.error('Error loading laptop sale info:', err);
+        console.error('Error loading dynamic computer services data:', err);
       }
     }
-    loadLaptopInfo();
+    loadAllData();
     return () => {
       active = false;
     };
   }, []);
-
-  const services = [
-    {
-      icon: <span className="text-sm font-normal leading-none block">🖥️</span>,
-      title: 'Used Laptop & Computer Sales',
-      desc: (
-        <span>
-          We sell quality tested second hand laptops and desktop computers starting at <span className="font-extrabold text-[#1e40af]">{laptopInfo.price}</span>. Every system is thoroughly checked and comes with {laptopInfo.warranty.toLowerCase()}. Best option for students looking for affordable computers.
-        </span>
-      ),
-      image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=400',
-      alt: `Quality tested second hand laptops and desktop computers for sales starting at ${laptopInfo.price}`,
-      hasBadge: true
-    },
-    {
-      icon: <span className="text-sm font-normal leading-none block">🔧</span>,
-      title: 'Computer Repairing',
-      desc: 'Pro hardware component repairs, display swaps, keyboard repairs, logic board trace tests, and resolving power failures.',
-      image: 'https://i.ibb.co/ks0HvMRK/computer-repair-1440x960-jpg.webp',
-      alt: 'Detailed closeup of hands repairing faulty laptop micro-circuits with soldering device'
-    },
-    {
-      icon: <span className="text-sm font-normal leading-none block">⚙️</span>,
-      title: 'Computer Maintenance & Service',
-      desc: 'Regular technical servicing, malware checks, dust vacuums, thermal paste upgrades, and clean-up options.',
-      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=400',
-      alt: 'Hardware engineer blowing dust cleaning CPU fans and servicing heat sinks'
-    }
-  ];
-
-  const features = [
-    {
-      icon: '💰',
-      title: `Starting at ${laptopInfo.price}`,
-      desc: 'Get a fully working laptop or desktop computer at the most affordable price in Delhi. Best option for students and home users.',
-    },
-    {
-      icon: '✅',
-      title: 'Fully Tested Systems',
-      desc: 'Every laptop and computer is thoroughly checked and tested before sale. You get a reliable working system every time.',
-    },
-    {
-      icon: '🛡️',
-      title: laptopInfo.warranty,
-      desc: `All systems come with ${laptopInfo.warranty.toLowerCase()}. If any issue occurs, we will fix it at no extra cost.`,
-    },
-    {
-      icon: '👨‍💻',
-      title: 'Expert Advice',
-      desc: 'Our experienced staff will help you choose the right laptop or computer based on your needs and budget.',
-    },
-  ];
 
   const benefits = [
     'Government registered institute since 1996 — trusted by thousands of candidates and clients',
     'All systems personally tested and verified by our professional technical experts',
     'Affordable prices with genuine testing warranty — zero hidden charges',
   ];
+
 
   return (
     <div className="bg-white text-slate-800 min-h-screen py-12 px-5 sm:py-16 sm:px-12 selection:bg-[#1e40af] selection:text-white">
@@ -146,41 +104,60 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
               {services.map((item, idx) => (
                 <div
-                  key={idx}
+                  key={item.id || idx}
                   className="bg-white border border-[#bfdbfe]/50 hover:border-[#1e40af] rounded-2xl overflow-hidden text-left flex flex-col justify-between group transition duration-300 hover:-translate-y-1 hover:shadow-[0_4px_20px_rgba(30,64,175,0.12)] w-full text-slate-800"
                 >
                   <div className="relative aspect-[16:10] w-full bg-slate-50 overflow-hidden border-b border-blue-100">
                     <img
                       src={item.image}
-                      alt={item.alt}
+                      alt={item.title}
                       referrerPolicy="no-referrer"
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute bottom-3 left-3 p-2 bg-[#1e40af] text-white rounded-lg shadow-md z-10 border border-blue-400/20">
-                      {item.icon}
+                      {item.title.toLowerCase().includes('laptop') || item.title.toLowerCase().includes('sale') ? (
+                        <span className="text-sm font-normal leading-none block">🖥️</span>
+                      ) : item.title.toLowerCase().includes('repair') ? (
+                        <span className="text-sm font-normal leading-none block">🔧</span>
+                      ) : (
+                        <span className="text-sm font-normal leading-none block">⚙️</span>
+                      )}
                     </div>
                   </div>
 
                   <div className="p-5 sm:p-7 space-y-3 flex-grow flex flex-col justify-between">
                     <div className="space-y-2">
-                      {item.hasBadge && (
+                      {(item.badge1 || item.badge2 || item.price || item.warranty || item.title.toLowerCase().includes('laptop') || item.title.toLowerCase().includes('sale')) && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
                           <div style={{ background: '#1e40af', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', width: 'fit-content' }}>
-                            Starting <span style={{ fontSize: '22px', fontWeight: '900', color: 'white' }}>{laptopInfo.price}</span>
+                            {item.badge1 || (item.price ? `Starting ₹${item.price.replace(/[^\d,]/g, '')}` : `Starting ${laptopInfo.price}`)}
                           </div>
-                          <div style={{ background: '#16a34a', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', width: 'fit-content' }}>
-                            {laptopInfo.warranty}
-                          </div>
+                          {(item.badge2 || item.warranty || laptopInfo.warranty) && (
+                            <div style={{ background: '#16a34a', color: 'white', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', width: 'fit-content' }}>
+                              {item.badge2 || item.warranty || laptopInfo.warranty}
+                            </div>
+                          )}
                         </div>
                       )}
                       <h3 className="text-md sm:text-lg font-black text-[#0f172a] uppercase group-hover:text-[#1e40af] transition-colors leading-tight">
                         {item.title}
                       </h3>
                       <p className="text-[11px] text-[#374151] font-semibold leading-relaxed">
-                        {item.desc}
+                        {item.description}
                       </p>
                     </div>
+
+                    {item.buttonText && (
+                      <div className="pt-2">
+                        <a
+                          href={item.buttonLink || "tel:8527208085"}
+                          className="w-full inline-flex items-center justify-center gap-2 bg-[#1e40af] hover:bg-blue-800 text-white font-black text-[10px] uppercase tracking-widest py-3 rounded-lg transition"
+                        >
+                          {item.buttonText}
+                        </a>
+                      </div>
+                    )}
 
                     <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest">
                       <span>Authorized support</span>
@@ -225,22 +202,68 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
           {/* FEATURE CARDS */}
           <section className="w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-              {features.map((feat, idx) => (
+              {laptopSales.map((feat, idx) => (
                 <div 
-                  key={idx}
-                  className="bg-[#f0f9ff] border border-[#bfdbfe] rounded-[12px] p-6 text-center flex flex-col justify-between h-full hover:border-[#1e40af] transition-all duration-300 shadow-sm hover:shadow"
+                  key={feat.id || idx}
+                  className="bg-[#f0f9ff] border border-[#bfdbfe] rounded-[12px] overflow-hidden text-center flex flex-col justify-between h-full hover:border-[#1e40af] transition-all duration-300 shadow-sm hover:shadow group"
                 >
-                  <div>
-                    <div style={{ width: '60px', height: '60px', background: '#dbeafe', borderRadius: '12px', display: 'flex', alignItems: 'center', justify: 'center', margin: '0 auto 16px auto', fontSize: '32px' }}>
-                      {feat.icon}
+                  <div className={feat.image ? "" : "p-6"}>
+                    {feat.image ? (
+                      <div className="relative aspect-[16:10] w-full bg-slate-50 overflow-hidden border-b border-blue-100">
+                        <img
+                          src={feat.image}
+                          alt={feat.title}
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {feat.icon && (
+                          <div className="absolute bottom-3 left-3 p-1.5 bg-[#dbeafe] text-[#1e40af] rounded-lg shadow-sm z-10 text-xl">
+                            {feat.icon}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ width: '60px', height: '60px', background: '#dbeafe', borderRadius: '12px', display: 'flex', alignItems: 'center', justify: 'center', margin: '0 auto 16px auto', fontSize: '32px' }}>
+                        {feat.icon || '💻'}
+                      </div>
+                    )}
+                    
+                    <div className={feat.image ? "p-6 text-left" : "text-center"}>
+                      <h3 className="text-md sm:text-lg font-black text-[#1e40af] uppercase tracking-tight mb-2">
+                        {feat.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 leading-relaxed font-semibold">
+                        {feat.description}
+                      </p>
+
+                      <div className={`flex flex-wrap gap-2 mt-3 ${feat.image ? "justify-start" : "justify-center"}`}>
+                        {feat.price && (
+                          <div className="bg-[#1e40af] text-white px-2.5 py-1 rounded-full text-[10px] font-bold">
+                            Price: {feat.price}
+                          </div>
+                        )}
+                        {feat.warranty && (
+                          <div className="bg-[#16a34a] text-white px-2.5 py-1 rounded-full text-[10px] font-bold">
+                            {feat.warranty}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <h3 className="text-md sm:text-lg font-black text-[#1e40af] uppercase tracking-tight mb-2">
-                      {feat.title}
-                    </h3>
-                    <p className="text-xs text-slate-600 leading-relaxed font-semibold">
-                      {feat.desc}
-                    </p>
                   </div>
+
+                  {(feat.buttonText || feat.price || feat.warranty || feat.image) && (
+                    <div className="px-6 pb-6">
+                      <div className="pt-4 border-t border-slate-100/60">
+                        <a
+                          href={(!feat.buttonLink || feat.buttonLink === '#' || feat.buttonLink.trim() === '') ? 'tel:8527208085' : feat.buttonLink}
+                          className="w-full inline-flex items-center justify-center gap-2 bg-[#1e40af] hover:bg-blue-800 text-white font-black text-[10px] uppercase tracking-widest py-3 rounded-lg transition"
+                        >
+                          {feat.buttonText || 'Inquire Now'}
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -1,9 +1,12 @@
-import { SheetCourse, SheetCrashCourse, LaptopSaleInfo, Announcement } from '../types';
+import { SheetCourse, SheetCrashCourse, LaptopSaleInfo, Announcement, SheetService, LaptopSaleCard } from '../types';
 
 const MAIN_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=0&single=true&output=csv';
 const CRASH_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1682720920&single=true&output=csv';
 const LAPTOP_SALE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=2144170283&single=true&output=csv';
 const ANNOUNCEMENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=675698559&single=true&output=csv';
+const SERVICES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1883481716&single=true&output=csv';
+const LAPTOP_CATALOGUE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1850733542&single=true&output=csv';
+
 
 
 const categoryMap: Record<string, string> = {
@@ -600,4 +603,272 @@ export async function fetchAnnouncements(): Promise<Announcement[]> {
     return FALLBACK_ANNOUNCEMENTS;
   }
 }
+
+export const FALLBACK_SERVICES: SheetService[] = [
+  {
+    id: '1',
+    title: 'Used Laptop & Computer Sales',
+    description: 'We sell quality tested second hand laptops and desktop computers starting at ₹6,500. Every system is thoroughly checked and comes with 1 month testing warranty. Best option for students looking for affordable computers.',
+    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=400',
+    buttonText: 'Inquire Now',
+    buttonLink: '',
+    active: true,
+    sortOrder: 1,
+    price: '₹6,500',
+    warranty: '1 Month Testing Warranty',
+    badge1: 'Starting ₹6,500',
+    badge2: '1 Month Testing Warranty'
+  },
+  {
+    id: '2',
+    title: 'Computer Repairing',
+    description: 'Pro hardware component repairs, display swaps, keyboard repairs, logic board trace tests, and resolving power failures.',
+    image: 'https://i.ibb.co/ks0HvMRK/computer-repair-1440x960-jpg.webp',
+    buttonText: 'Book Repair',
+    buttonLink: '',
+    active: true,
+    sortOrder: 2
+  },
+  {
+    id: '3',
+    title: 'Computer Maintenance & Service',
+    description: 'Regular technical servicing, malware checks, dust vacuums, thermal paste upgrades, and clean-up options.',
+    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=400',
+    buttonText: 'Book Service',
+    buttonLink: '',
+    active: true,
+    sortOrder: 3
+  }
+];
+
+export const FALLBACK_LAPTOP_SALES: LaptopSaleCard[] = [
+  {
+    id: '1',
+    title: 'Starting at ₹6,500',
+    description: 'Get a fully working laptop or desktop computer at the most affordable price in Delhi. Best option for students and home users.',
+    icon: '💰',
+    active: true,
+    sortOrder: 1
+  },
+  {
+    id: '2',
+    title: 'Fully Tested Systems',
+    description: 'Every laptop and computer is thoroughly checked and tested before sale. You get a reliable working system every time.',
+    icon: '✅',
+    active: true,
+    sortOrder: 2
+  },
+  {
+    id: '3',
+    title: '1 Month Testing Warranty',
+    description: 'All systems come with 1 month testing warranty. If any issue occurs, we will fix it at no extra cost.',
+    icon: '🛡️',
+    active: true,
+    sortOrder: 3
+  },
+  {
+    id: '4',
+    title: 'Expert Advice',
+    description: 'Our experienced staff will help you choose the right laptop or computer based on your needs and budget.',
+    icon: '👨‍💻',
+    active: true,
+    sortOrder: 4
+  }
+];
+
+export async function fetchServices(): Promise<SheetService[]> {
+  try {
+    const response = await fetch(SERVICES_CSV_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error fetching services: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    if (rows.length < 2) {
+      return FALLBACK_SERVICES;
+    }
+
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+
+    const idIdx = headers.indexOf('id');
+    const titleIdx = headers.indexOf('title');
+    const descIdx = headers.indexOf('description');
+    const imgIdx = headers.indexOf('image');
+    const btnTextIdx = headers.indexOf('button text') !== -1 ? headers.indexOf('button text') : headers.indexOf('buttontext');
+    const btnLinkIdx = headers.indexOf('button link') !== -1 ? headers.indexOf('button link') : headers.indexOf('buttonlink');
+    const activeIdx = headers.indexOf('active');
+    const sortIdx = headers.indexOf('sortorder') !== -1 ? headers.indexOf('sortorder') : headers.indexOf('sort_order');
+    const priceIdx = headers.indexOf('price');
+    const warrantyIdx = headers.indexOf('warranty');
+    const badge1Idx = headers.indexOf('badge1');
+    const badge2Idx = headers.indexOf('badge2');
+
+    const services: SheetService[] = [];
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (row.length === 0 || !row[titleIdx === -1 ? 1 : titleIdx]) continue;
+
+      const id = idIdx !== -1 && row[idIdx] ? row[idIdx] : String(i);
+      const title = titleIdx !== -1 && row[titleIdx] ? row[titleIdx] : '';
+      const description = descIdx !== -1 && row[descIdx] ? row[descIdx] : '';
+      
+      let image = imgIdx !== -1 && row[imgIdx] ? row[imgIdx] : '';
+      if (!image) {
+        if (title.toLowerCase().includes('laptop') || title.toLowerCase().includes('sale')) {
+          image = 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=400';
+        } else if (title.toLowerCase().includes('repair')) {
+          image = 'https://i.ibb.co/ks0HvMRK/computer-repair-1440x960-jpg.webp';
+        } else {
+          image = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=400';
+        }
+      }
+
+      const buttonText = btnTextIdx !== -1 && row[btnTextIdx] ? row[btnTextIdx] : '';
+      const buttonLink = btnLinkIdx !== -1 && row[btnLinkIdx] ? row[btnLinkIdx] : '';
+      const activeStr = activeIdx !== -1 && row[activeIdx] ? row[activeIdx].trim().toLowerCase() : 'true';
+      const active = activeStr === 'true' || activeStr === 'yes' || activeStr === '1';
+      const sortOrder = sortIdx !== -1 && row[sortIdx] ? parseInt(row[sortIdx], 10) : i;
+
+      const price = priceIdx !== -1 && row[priceIdx] ? row[priceIdx] : '';
+      const warranty = warrantyIdx !== -1 && row[warrantyIdx] ? row[warrantyIdx] : '';
+      const badge1 = badge1Idx !== -1 && row[badge1Idx] ? row[badge1Idx] : '';
+      const badge2 = badge2Idx !== -1 && row[badge2Idx] ? row[badge2Idx] : '';
+
+      services.push({
+        id,
+        title,
+        description,
+        image,
+        buttonText,
+        buttonLink,
+        active,
+        sortOrder: isNaN(sortOrder) ? i : sortOrder,
+        price,
+        warranty,
+        badge1,
+        badge2
+      });
+    }
+
+    return services
+      .filter(s => s.active)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+  } catch (error) {
+    console.error('Failed to fetch services from Google Sheets. Using fallback data.', error);
+    return FALLBACK_SERVICES;
+  }
+}
+
+export async function fetchLaptopSales(): Promise<LaptopSaleCard[]> {
+  try {
+    const response = await fetch(LAPTOP_CATALOGUE_CSV_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error fetching laptop sales: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    if (rows.length < 2) {
+      return FALLBACK_LAPTOP_SALES;
+    }
+
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+
+    if (headers.includes('key') && headers.includes('value')) {
+      const kv: Record<string, string> = {};
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.length < 2) continue;
+        const key = row[0]?.trim();
+        const value = row[1]?.trim();
+        if (key) {
+          kv[key] = value;
+        }
+      }
+
+      const laptopSales: LaptopSaleCard[] = [];
+      for (let i = 1; i <= 10; i++) {
+        const title = kv[`feature${i}_title`] || kv[`feature_${i}_title`] || kv[`laptop_${i}_title`] || kv[`title_${i}`];
+        const description = kv[`feature${i}_desc`] || kv[`feature${i}_description`] || kv[`laptop_${i}_desc`] || kv[`desc_${i}`];
+        const icon = kv[`feature${i}_icon`] || kv[`laptop_${i}_icon`] || kv[`icon_${i}`];
+        const image = kv[`feature${i}_image`] || kv[`laptop_${i}_image`] || kv[`image_${i}`];
+        const price = kv[`feature${i}_price`] || kv[`laptop_${i}_price`] || kv[`price_${i}`];
+        const warranty = kv[`feature${i}_warranty`] || kv[`laptop_${i}_warranty`] || kv[`warranty_${i}`];
+        const buttonText = kv[`feature${i}_button_text`] || kv[`laptop_${i}_button_text`] || kv[`button_text_${i}`];
+        const buttonLink = kv[`feature${i}_button_link`] || kv[`laptop_${i}_button_link`] || kv[`button_link_${i}`];
+
+        if (title || description) {
+          laptopSales.push({
+            id: String(i),
+            title: title || '',
+            description: description || '',
+            icon: icon || '💻',
+            image,
+            price,
+            warranty,
+            buttonText,
+            buttonLink,
+            active: true,
+            sortOrder: i
+          });
+        }
+      }
+
+      if (laptopSales.length > 0) {
+        return laptopSales;
+      }
+
+      return FALLBACK_LAPTOP_SALES;
+    } else {
+      const idIdx = headers.indexOf('id');
+      const titleIdx = headers.indexOf('title');
+      const descIdx = headers.indexOf('description') !== -1 ? headers.indexOf('description') : headers.indexOf('desc');
+      const imgIdx = headers.indexOf('image') !== -1 ? headers.indexOf('image') : headers.indexOf('img');
+      const priceIdx = headers.indexOf('price');
+      const warrantyIdx = headers.indexOf('warranty');
+      const btnTextIdx = headers.indexOf('button text') !== -1 ? headers.indexOf('button text') : (headers.indexOf('buttontext') !== -1 ? headers.indexOf('buttontext') : headers.indexOf('button_text'));
+      const btnLinkIdx = headers.indexOf('button link') !== -1 ? headers.indexOf('button link') : (headers.indexOf('buttonlink') !== -1 ? headers.indexOf('buttonlink') : headers.indexOf('button_link'));
+      const activeIdx = headers.indexOf('active');
+      const sortIdx = headers.indexOf('sortorder') !== -1 ? headers.indexOf('sortorder') : (headers.indexOf('sort_order') !== -1 ? headers.indexOf('sort_order') : headers.indexOf('sort'));
+
+      const laptopSales: LaptopSaleCard[] = [];
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.length === 0 || !row[titleIdx === -1 ? 0 : titleIdx]) continue;
+
+        const id = idIdx !== -1 && row[idIdx] ? row[idIdx] : String(i);
+        const title = titleIdx !== -1 && row[titleIdx] ? row[titleIdx] : '';
+        const description = descIdx !== -1 && row[descIdx] ? row[descIdx] : '';
+        const image = imgIdx !== -1 && row[imgIdx] ? row[imgIdx] : '';
+        const price = priceIdx !== -1 && row[priceIdx] ? row[priceIdx] : '';
+        const warranty = warrantyIdx !== -1 && row[warrantyIdx] ? row[warrantyIdx] : '';
+        const buttonText = btnTextIdx !== -1 && row[btnTextIdx] ? row[btnTextIdx] : '';
+        const buttonLink = btnLinkIdx !== -1 && row[btnLinkIdx] ? row[btnLinkIdx] : '';
+        const activeStr = activeIdx !== -1 && row[activeIdx] ? row[activeIdx].trim().toLowerCase() : 'true';
+        const active = activeStr === 'true' || activeStr === 'yes' || activeStr === '1';
+        const sortOrder = sortIdx !== -1 && row[sortIdx] ? parseInt(row[sortIdx], 10) : i;
+
+        laptopSales.push({
+          id,
+          title,
+          description,
+          image,
+          price,
+          warranty,
+          buttonText,
+          buttonLink,
+          active,
+          sortOrder: isNaN(sortOrder) ? i : sortOrder
+        });
+      }
+
+      return laptopSales
+        .filter(l => l.active)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+    }
+  } catch (error) {
+    console.error('Failed to fetch laptop sales from Google Sheets. Using fallback data.', error);
+    return FALLBACK_LAPTOP_SALES;
+  }
+}
+
 
