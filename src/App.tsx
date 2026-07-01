@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import { fetchAnnouncements } from './services/googleSheets';
 import { Announcement } from './types';
+import SEOMetadata from './components/SEOMetadata';
 
 // Import our new premium page components
 import HomeView from './components/HomeView';
@@ -13,6 +14,7 @@ import ComputerServicesView from './components/ComputerServicesView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
 import GalleryPage from './components/GalleryPage';
+import NotFoundView from './components/NotFoundView';
 
 export default function App() {
   const location = useLocation();
@@ -172,6 +174,7 @@ export default function App() {
 
   return (
     <div className="bg-white text-slate-800 min-h-screen flex flex-col font-sans selection:bg-[#1e40af] selection:text-white relative">
+      <SEOMetadata />
       
 
       <header className="sticky top-0 left-0 w-full z-[9999] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.1)] px-6 py-4 sm:px-12 navbar">
@@ -439,7 +442,7 @@ export default function App() {
               </div>
             </div>
           } />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundView />} />
         </Routes>
       </main>
 
