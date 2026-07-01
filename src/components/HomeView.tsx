@@ -1114,30 +1114,117 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
         </div>
       </motion.section>
 
-      {/* SECTION 10 — Local SEO Section */}
+      {/* SECTION 10 — Local SEO & Nearby Search Optimizer */}
       <motion.section 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        style={{ padding: '40px 24px', background: '#1e40af' }}
+        className="py-16 px-6 bg-slate-950 text-white border-t border-slate-900"
       >
-        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', color: 'white' }}>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '12px' }} className="uppercase tracking-tight">
-            Computer Training Institute in Madangir, South Delhi
-          </h2>
-          <p style={{ color: '#bfdbfe', fontSize: '14px', lineHeight: '1.7', fontWeight: 500 }}>
-            CCT Center for Computer Training is located at DDA Flats, Madangir, New Delhi. We serve students from Madangir, Ambedkar Nagar, Sangam Vihar, Govindpuri, Khanpur, Tughlakabad, Badarpur and nearby areas of South Delhi. Best computer institute near Madangir market.
-          </p>
-          <a 
-            href="https://www.google.com/maps/place/CCT+Computer+Education/@28.5209673,77.2287807,17z/data=!3m1!4b1!4m6!3m5!1s0x390ce190013cb139:0xa1c2c0080c2cc2b0!8m2!3d28.5209673!4d77.2287807!16s%2Fg%2F12hn29_kr?hl=en-IN&entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D" 
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'inline-block', marginTop: '16px', background: 'white', color: '#1e40af', padding: '10px 24px', borderRadius: '8px', fontWeight: 700, textDecoration: 'none', fontSize: '14px' }}
-            className="hover:bg-slate-50 transition"
-          >
-            📍 Get Directions on Google Maps
-          </a>
+        <div className="max-w-7xl mx-auto space-y-12">
+          {/* Header */}
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <span className="text-blue-400 text-xs font-black uppercase tracking-[0.25em] bg-blue-950/80 border border-blue-900/50 px-4 py-1.5 rounded-full inline-block">
+              Locality Access & Search Optimization
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white leading-tight">
+              Best Computer Training Institute Near Me in South Delhi
+            </h2>
+            <p className="text-slate-400 text-sm font-medium leading-relaxed">
+              Serving students and professionals across Delhi NCR with top-tier hardware laboratories, 1:1 computer setup ratios, and government-recognized certifications. Conveniently accessible via Saket, Ambedkar Nagar, and Malviya Nagar transit hubs.
+            </p>
+          </div>
+
+          {/* Three-Column Detailed SEO Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Col 1: Nearby Localities We Serve */}
+            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl space-y-4">
+              <h3 className="text-lg font-black text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+                📍 Nearby Localities We Serve
+              </h3>
+              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                Students from these areas in South Delhi can easily commute to our Madangir computer center (via bus, auto, or metro):
+              </p>
+              <div className="flex flex-wrap gap-2 pt-2">
+                {[
+                  'Madangir', 'Sangam Vihar', 'Ambedkar Nagar', 'Saket', 'Khanpur', 
+                  'Govindpuri', 'Pushp Vihar', 'Tughlakabad', 'Dakshinpuri', 
+                  'Malviya Nagar', 'Deoli', 'Alaknanda', 'Kalkaji', 'Badarpur'
+                ].map((loc) => (
+                  <span 
+                    key={loc} 
+                    className="text-[11px] font-bold uppercase bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg transition"
+                  >
+                    {loc}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Col 2: Most Popular Local Search Queries */}
+            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl space-y-4">
+              <h3 className="text-lg font-black text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+                🔍 Popular Near-Me Queries
+              </h3>
+              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                CCT Computer Education is the top-ranked match for these active local student searches:
+              </p>
+              <div className="flex flex-col gap-2.5 text-xs text-slate-300 font-bold pt-1">
+                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                  ⚡ <span className="text-slate-400 font-normal">computer courses near me</span>
+                </span>
+                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                  📊 <span className="text-slate-400 font-normal">Tally Prime course with GST near me</span>
+                </span>
+                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                  🐍 <span className="text-slate-400 font-normal">best Python programming institute in South Delhi</span>
+                </span>
+                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                  💻 <span className="text-slate-400 font-normal">computer repairing services in Madangir Delhi</span>
+                </span>
+                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                  🛒 <span className="text-slate-400 font-normal">second-hand used laptop shop in Delhi</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Col 3: Why Commute to CCT Madangir? */}
+            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <h3 className="text-lg font-black text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+                  🏆 Why Choose CCT Delhi?
+                </h3>
+                <ul className="space-y-2.5 text-xs text-slate-300 font-semibold">
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-blue-500 text-sm">✓</span>
+                    <span><strong>1:1 Desktop Ratio</strong> — Guaranteed separate computer to practice individually on your schedule.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-blue-500 text-sm">✓</span>
+                    <span><strong>Govt Registered Certificate</strong> — Delhi Government recognized course validation to unlock corporate jobs.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="text-blue-500 text-sm">✓</span>
+                    <span><strong>Est. 1996 Legacy</strong> — Serving and training computer operators, developers, and accountants for 29+ years.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-slate-850">
+                <a 
+                  href="https://www.google.com/maps/place/CCT+Computer+Education/@28.5209673,77.2287807,17z/data=!3m1!4b1!4m6!3m5!1s0x390ce190013cb139:0xa1c2c0080c2cc2b0!8m2!3d28.5209673!4d77.2287807!16s%2Fg%2F12hn29_kr?hl=en-IN&entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all"
+                >
+                  📍 Open Live Navigation Route
+                </a>
+              </div>
+            </div>
+
+          </div>
         </div>
       </motion.section>
 
