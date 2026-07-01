@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Phone, MapPin, Menu, X, ArrowUpRight, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import { fetchAnnouncements } from './services/googleSheets';
 import { Announcement } from './types';
 
@@ -14,8 +15,25 @@ import ContactView from './components/ContactView';
 import GalleryPage from './components/GalleryPage';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<'home' | 'courses' | 'timing' | 'services' | 'gallery' | 'about' | 'contact'>('home');
-  const [servicesSubTab, setServicesSubTab] = useState<'services' | 'laptop-sale'>('services');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Helper to derive active view and sub-tabs from clean pathnames
+  const getActiveViewAndSubTab = () => {
+    const path = location.pathname;
+    if (path === '/about') return { view: 'about' as const, subTab: 'services' as const };
+    if (path === '/courses' || path === '/course-details') return { view: 'courses' as const, subTab: 'services' as const };
+    if (path === '/timing' || path === '/batch-timing') return { view: 'timing' as const, subTab: 'services' as const };
+    if (path === '/services') return { view: 'services' as const, subTab: 'services' as const };
+    if (path === '/laptop-sale') return { view: 'services' as const, subTab: 'laptop-sale' as const };
+    if (path === '/gallery') return { view: 'gallery' as const, subTab: 'services' as const };
+    if (path === '/contact') return { view: 'contact' as const, subTab: 'services' as const };
+    if (path === '/blog') return { view: 'blog' as const, subTab: 'services' as const };
+    return { view: 'home' as const, subTab: 'services' as const };
+  };
+
+  const { view: activeView, subTab: servicesSubTab } = getActiveViewAndSubTab();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [announcements, setAnnouncements] = useState<Announcement[]>([
@@ -63,44 +81,10 @@ export default function App() {
     };
   }, []);
 
-  // Synchronize hash changes (e.g. #/laptop-sale) with activeView state
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash === '#/laptop-sale' || hash === '#laptop-sale') {
-        setActiveView('services');
-        setServicesSubTab('laptop-sale');
-      } else if (hash === '#/courses' || hash === '#courses') {
-        setActiveView('courses');
-      } else if (hash === '#/timing' || hash === '#timing') {
-        setActiveView('timing');
-      } else if (hash === '#/services' || hash === '#services') {
-        setActiveView('services');
-        setServicesSubTab('services');
-      } else if (hash === '#/gallery' || hash === '#gallery') {
-        setActiveView('gallery');
-      } else if (hash === '#/about' || hash === '#about') {
-        setActiveView('about');
-      } else if (hash === '#/contact' || hash === '#contact') {
-        setActiveView('contact');
-      } else if (hash === '#/home' || hash === '#home') {
-        setActiveView('home');
-      }
-    };
-    handleHashChange(); // on load
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
-  // Auto scroll to top on page navigation and keep window hash up to date
+  // Smooth scroll to top on every page transition
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (activeView === 'home') {
-      window.location.hash = '#/';
-    } else {
-      window.location.hash = `#/${activeView}`;
-    }
-  }, [activeView]);
+  }, [location.pathname]);
 
   // Trigger scroll-in animations on load and page transition
   useEffect(() => {
@@ -178,8 +162,8 @@ export default function App() {
   };
 
   const handleAnnouncementClick = () => {
-    if (activeView !== 'home') {
-      setActiveView('home');
+    if (location.pathname !== '/') {
+      navigate('/');
     }
     setTimeout(() => {
       document.getElementById('enquiry-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -199,7 +183,7 @@ export default function App() {
               if (isMenuOpen) {
                 closeMenu();
               }
-              setActiveView('home');
+              navigate('/');
             }} 
             className="flex items-center gap-3.5 group text-left cursor-pointer focus:outline-none"
           >
@@ -222,38 +206,50 @@ export default function App() {
 
           {/* DESKTOP NAVIGATION INTERFACE (Visible on medium screen +) */}
           <nav className="hidden lg:flex items-center gap-1">
-            {(['home', 'courses', 'timing', 'services', 'gallery', 'about', 'contact'] as const).map((view) => (
-              <button
-                key={view}
-                onClick={() => {
-                  setActiveView(view);
-                  if (view === 'services') {
-                    setServicesSubTab('services');
-                  }
-                }}
-                className={`relative px-4 py-2 text-xs font-black uppercase tracking-wider transition ${
-                  activeView === view 
-                    ? 'text-[#1e40af]' 
-                    : 'text-slate-600 hover:text-[#1e40af]'
-                }`}
-              >
-                {/* Active Indicator Underline */}
-                {activeView === view && (
-                  <motion.span 
-                    layoutId="activeUnderline"
-                    className="absolute bottom-0 left-4 right-4 h-[2px] bg-[#1e40af]" 
-                    transition={{ type: 'spring', damping: 15 }}
-                  />
-                )}
-                {view === 'timing' && 'Batch Timing'}
-                {view === 'services' && 'Services & Laptop Sale'}
-                {view === 'gallery' && 'Gallery'}
-                {view === 'home' && 'Home'}
-                {view === 'courses' && 'Courses'}
-                {view === 'about' && 'About'}
-                {view === 'contact' && 'Contact'}
-              </button>
-            ))}
+            {[
+              { name: 'Home', path: '/' },
+              { name: 'Courses', path: '/courses' },
+              { name: 'Batch Timing', path: '/timing' },
+              { name: 'Services & Laptop Sale', path: '/services' },
+              { name: 'Gallery', path: '/gallery' },
+              { name: 'About', path: '/about' },
+              { name: 'Contact', path: '/contact' },
+            ].map((item) => {
+              const viewNameMap: Record<string, string> = {
+                '/': 'home',
+                '/courses': 'courses',
+                '/timing': 'timing',
+                '/services': 'services',
+                '/laptop-sale': 'services',
+                '/gallery': 'gallery',
+                '/about': 'about',
+                '/contact': 'contact',
+              };
+              const isItemActive = activeView === viewNameMap[item.path];
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                  }}
+                  className={`relative px-4 py-2 text-xs font-black uppercase tracking-wider transition ${
+                    isItemActive 
+                      ? 'text-[#1e40af]' 
+                      : 'text-slate-600 hover:text-[#1e40af]'
+                  }`}
+                >
+                  {/* Active Indicator Underline */}
+                  {isItemActive && (
+                    <motion.span 
+                      layoutId="activeUnderline"
+                      className="absolute bottom-0 left-4 right-4 h-[2px] bg-[#1e40af]" 
+                      transition={{ type: 'spring', damping: 15 }}
+                    />
+                  )}
+                  {item.name}
+                </button>
+              );
+            })}
           </nav>
 
           {/* RIGHT SIDE ACTIONS */}
@@ -313,30 +309,40 @@ export default function App() {
               {/* Large Clear Routes in #1e40af */}
               <div className="flex flex-col items-center justify-center flex-1 space-y-5 mt-16 text-center">
                 {[
-                  { name: 'Home', view: 'home' },
-                  { name: 'Courses', view: 'courses' },
-                  { name: 'Batch Timing', view: 'timing' },
-                  { name: 'Services & Laptop Sale', view: 'services' },
-                  { name: 'Gallery', view: 'gallery' },
-                  { name: 'About', view: 'about' },
-                  { name: 'Contact', view: 'contact' },
-                ].map((item, idx) => (
-                  <button
-                    key={item.view}
-                    onClick={() => {
-                      setActiveView(item.view as any);
-                      if (item.view === 'services') {
-                        setServicesSubTab('services');
-                      }
-                      closeMenu();
-                    }}
-                    className={`text-2xl sm:text-3xl font-black uppercase tracking-tight transition hover:opacity-80 active:scale-95 focus:outline-none py-2.5 min-h-[44px] ${
-                      activeView === item.view ? 'text-[#1e40af]' : 'text-[#1e40af]/80'
-                    }`}
-                  >
-                    {item.name}
-                  </button>
-                ))}
+                  { name: 'Home', path: '/' },
+                  { name: 'Courses', path: '/courses' },
+                  { name: 'Batch Timing', path: '/timing' },
+                  { name: 'Services & Laptop Sale', path: '/services' },
+                  { name: 'Gallery', path: '/gallery' },
+                  { name: 'About', path: '/about' },
+                  { name: 'Contact', path: '/contact' },
+                ].map((item) => {
+                  const viewNameMap: Record<string, string> = {
+                    '/': 'home',
+                    '/courses': 'courses',
+                    '/timing': 'timing',
+                    '/services': 'services',
+                    '/laptop-sale': 'services',
+                    '/gallery': 'gallery',
+                    '/about': 'about',
+                    '/contact': 'contact',
+                  };
+                  const isItemActive = activeView === viewNameMap[item.path];
+                  return (
+                    <button
+                      key={item.path}
+                      onClick={() => {
+                        navigate(item.path);
+                        closeMenu();
+                      }}
+                      className={`text-2xl sm:text-3xl font-black uppercase tracking-tight transition hover:opacity-80 active:scale-95 focus:outline-none py-2.5 min-h-[44px] ${
+                        isItemActive ? 'text-[#1e40af]' : 'text-[#1e40af]/80'
+                      }`}
+                    >
+                      {item.name}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Responsive action buttons at the bottom coordinates of screen */}
@@ -372,8 +378,7 @@ export default function App() {
       {activeView === 'home' && (
         <div 
           onClick={() => {
-            setActiveView('services');
-            setServicesSubTab('laptop-sale');
+            navigate('/laptop-sale');
           }}
           style={{ background: '#1e40af', color: 'white', padding: '12px 0', overflow: 'hidden', cursor: 'pointer' }}
           className="w-full relative z-[9997] border-b border-blue-700/50 select-none announcement-bar cursor-pointer hover:bg-[#1d4ed8] transition-colors mb-6 md:mb-10"
@@ -395,38 +400,47 @@ export default function App() {
 
       {/* DYNAMIC RENDERING BLOCK FOR SWITCHED VIEW ROUTERS */}
       <main className="flex-1 bg-white pt-0 w-full">
-        {activeView === 'home' && (
-          <HomeView 
-            onNavigateToCourses={() => setActiveView('courses')} 
-            onNavigateToLaptopSale={() => {
-              setActiveView('services');
-              setServicesSubTab('laptop-sale');
-            }}
-            onNavigateToServices={() => {
-              setActiveView('services');
-              setServicesSubTab('services');
-            }}
-            onNavigateToGallery={() => setActiveView('gallery')}
-          />
-        )}
-        {activeView === 'courses' && (
-          <CoursesView />
-        )}
-        {activeView === 'timing' && (
-          <BatchTimingView />
-        )}
-        {activeView === 'services' && (
-          <ComputerServicesView initialTab={servicesSubTab} />
-        )}
-        {activeView === 'about' && (
-          <AboutView />
-        )}
-        {activeView === 'gallery' && (
-          <GalleryPage />
-        )}
-        {activeView === 'contact' && (
-          <ContactView />
-        )}
+        <Routes>
+          <Route path="/" element={
+            <HomeView 
+              onNavigateToCourses={() => navigate('/courses')} 
+              onNavigateToLaptopSale={() => navigate('/laptop-sale')}
+              onNavigateToServices={() => navigate('/services')}
+              onNavigateToGallery={() => navigate('/gallery')}
+            />
+          } />
+          <Route path="/courses" element={<CoursesView />} />
+          <Route path="/course-details" element={<CoursesView />} />
+          <Route path="/timing" element={<BatchTimingView />} />
+          <Route path="/batch-timing" element={<BatchTimingView />} />
+          <Route path="/services" element={<div key="services_view" className="w-full"><ComputerServicesView initialTab="services" /></div>} />
+          <Route path="/laptop-sale" element={<div key="laptop_sale_view" className="w-full"><ComputerServicesView initialTab="laptop-sale" /></div>} />
+          <Route path="/about" element={<AboutView />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/contact" element={<ContactView />} />
+          <Route path="/blog" element={
+            <div className="max-w-7xl mx-auto py-20 px-6 text-center space-y-6">
+              <span className="text-[#1e40af] text-xs font-black uppercase tracking-widest bg-blue-50 px-4 py-2 rounded-full">
+                CCT Blog & Insights
+              </span>
+              <h1 className="text-4xl font-black text-slate-900 uppercase">
+                Educational Blog & Tech Insights
+              </h1>
+              <p className="text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
+                Stay updated with the latest computer hardware trends, core programming tricks, and accounting tips directly from our senior certified educators at CCT Delhi.
+              </p>
+              <div className="border border-blue-100 bg-[#f0f9ff]/50 rounded-2xl p-8 max-w-lg mx-auto text-left space-y-4">
+                <h3 className="font-bold text-[#1e40af] text-md sm:text-lg">Featured Articles (Coming Soon)</h3>
+                <ul className="space-y-2.5 text-xs sm:text-sm text-slate-700 font-semibold">
+                  <li className="flex items-center gap-2">👉 10 Tally Prime Hacks for Corporate Ledger Reconciliation</li>
+                  <li className="flex items-center gap-2">👉 Basic vs Advanced Python: What Companies Look For in 2026</li>
+                  <li className="flex items-center gap-2">👉 Choosing the Right Second-Hand Laptop for Student Budgets</li>
+                </ul>
+              </div>
+            </div>
+          } />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
       {/* SPECIAL BOTTOM HIGHLIGHT NOTE - Renders bottom of every page */}
@@ -546,43 +560,43 @@ export default function App() {
               </h5>
               <div className="flex flex-col gap-2 text-xs font-black uppercase text-[#bfdbfe]">
                 <button 
-                  onClick={() => { setActiveView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   Home
                 </button>
                 <button 
-                  onClick={() => { setActiveView('courses'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/courses'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   Courses
                 </button>
                 <button 
-                  onClick={() => { setActiveView('timing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/timing'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   Batch Timing
                 </button>
                 <button 
-                  onClick={() => { setActiveView('services'); setServicesSubTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/services'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   Services & Laptop Sale
                 </button>
                 <button 
-                  onClick={() => { setActiveView('gallery'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/gallery'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   Gallery
                 </button>
                 <button 
-                  onClick={() => { setActiveView('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/about'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   About
                 </button>
                 <button 
-                  onClick={() => { setActiveView('contact'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { navigate('/contact'); }}
                   className="hover:text-white transition text-left cursor-pointer hover:underline"
                 >
                   Contact
