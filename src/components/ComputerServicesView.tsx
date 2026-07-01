@@ -294,6 +294,79 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
             </div>
           </section>
 
+          {/* LOCAL SEO SECTION — LAPTOP SALES & REPAIRS NEAR ME */}
+          <section className="py-12 px-6 sm:px-12 bg-slate-900 text-white rounded-3xl border border-slate-800 space-y-10">
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="text-center space-y-3">
+                <span className="text-blue-400 text-xs font-black uppercase tracking-widest bg-blue-950/80 border border-blue-900/50 px-4 py-1.5 rounded-full inline-block">
+                  South Delhi Laptop Sales & Repairs Hub
+                </span>
+                <h2 className="text-xl sm:text-3xl font-black uppercase tracking-tight text-white leading-tight">
+                  Best Second Hand Laptops & Computer Repair Near Me
+                </h2>
+                <p className="text-slate-400 text-xs sm:text-sm font-semibold max-w-2xl mx-auto leading-relaxed">
+                  Looking for the top certified used laptop shop or computer hardware services near Madangir? CCT offers premium quality Dell, HP, Lenovo, and Apple laptops with testing warranty, alongside reliable hardware diagnostic repairs.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                {/* Search Queries List */}
+                <div className="space-y-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800/85">
+                  <h4 className="text-sm font-black text-blue-400 uppercase tracking-wider flex items-center gap-2">
+                    🔍 Popular Laptop & Service Searches We Fulfil
+                  </h4>
+                  <ul className="space-y-2.5 text-xs text-slate-300 font-bold">
+                    <li className="flex items-center gap-2">👉 second hand laptop shop near me in South Delhi</li>
+                    <li className="flex items-center gap-2">👉 best laptop repairing service in Madangir New Delhi</li>
+                    <li className="flex items-center gap-2">👉 used Dell HP Lenovo Thinkpad laptops starting at ₹6,500</li>
+                    <li className="flex items-center gap-2">👉 computer hardware mechanics in Ambedkar Nagar</li>
+                    <li className="flex items-center gap-2">👉 laptop keyboard & screen replacement in Sangam Vihar</li>
+                    <li className="flex items-center gap-2">👉 Windows operating system formatting near me</li>
+                  </ul>
+                </div>
+
+                {/* Local Area Service List */}
+                <div className="space-y-4 bg-slate-950/40 p-5 rounded-2xl border border-slate-800/85">
+                  <h4 className="text-sm font-black text-blue-400 uppercase tracking-wider flex items-center gap-2">
+                    📍 Areas Covered For Desktop / Laptop Repair
+                  </h4>
+                  <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                    Get quick hardware servicing or pick up your tested second-hand laptop from our Ambedkar Nagar / Madangir center, serving nearby locations:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {[
+                      'Madangir Market', 'Sangam Vihar', 'Ambedkar Nagar', 'Saket', 'Khanpur', 
+                      'Pushp Vihar', 'Govindpuri', 'Tughlakabad', 'Dakshinpuri', 'Hamdard Nagar',
+                      'Kalkaji', 'Badarpur', 'Chirag Delhi', 'Alaknanda'
+                    ].map((area) => (
+                      <span key={area} className="text-[10px] font-black uppercase bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-md hover:bg-slate-750 transition">
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Added Google rating or trust signal specifically for laptop service */}
+              <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div className="space-y-1">
+                  <div className="text-yellow-400 text-sm font-black">★★★★★</div>
+                  <p className="text-[11px] text-slate-400 font-semibold">
+                    Over 63+ five-star reviews on Google Maps for both courses and professional repair jobs!
+                  </p>
+                </div>
+                <a
+                  href="https://www.google.com/maps/place/CCT+Computer+Education/@28.5209673,77.2287807,17z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider px-5 py-2.5 rounded-lg transition"
+                >
+                  📍 Locate Our Shop
+                </a>
+              </div>
+            </div>
+          </section>
+
           {/* BIG CTA SECTION AT THE BOTTOM */}
           <section className="py-12 max-w-4xl mx-auto text-center space-y-8">
             <div className="space-y-3">
