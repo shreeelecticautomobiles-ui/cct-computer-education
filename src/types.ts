@@ -102,10 +102,15 @@ export interface LaptopSaleCard {
 export interface LaptopGalleryItem {
   id: string;
   imageUrl: string;
+  stockStatus?: string;
+  badge?: string;
+  title?: string;
+  specifications?: string;
+  price?: string;
+  buttonText?: string;
+  buttonLink?: string;
   active: boolean;
   sortOrder: number;
-  brand?: string;
-  price?: string;
 }
 
 

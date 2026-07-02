@@ -18,6 +18,9 @@ interface StockItem {
   price: string;
   image: string;
   tag: string;
+  stockStatus?: string;
+  buttonText?: string;
+  buttonLink?: string;
   isCustom?: boolean;
 }
 
@@ -85,16 +88,22 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
           setServices(servicesData);
           setLaptopSales(salesData);
 
-          const validGalleryItems = galleryData.filter(item => item.imageUrl && item.imageUrl.trim() !== '');
-          if (validGalleryItems.length > 0) {
-            const mappedItems: StockItem[] = validGalleryItems.map((item, idx) => ({
-              id: item.id,
-              title: item.brand || `Premium Laptop Stock ${idx + 1}`,
-              description: 'Thoroughly tested pre-owned computer workstation in pristine condition. Contact for full specs.',
-              price: item.price || `Contact for Price`,
-              image: item.imageUrl,
-              tag: 'Certified Grade A'
-            }));
+          if (galleryData.length > 0) {
+            const mappedItems: StockItem[] = galleryData.map((item, idx) => {
+              const defaultPlaceholder = DEFAULT_STOCK_ITEMS[idx % DEFAULT_STOCK_ITEMS.length]?.image || DEFAULT_STOCK_ITEMS[0].image;
+              const imageToUse = (item.imageUrl && item.imageUrl.trim() !== '') ? item.imageUrl : defaultPlaceholder;
+              return {
+                id: item.id,
+                title: item.title || `Premium Laptop Stock ${idx + 1}`,
+                description: item.specifications || 'Thoroughly tested pre-owned computer workstation in pristine condition. Contact for full specs.',
+                price: item.price || `Contact for Price`,
+                image: imageToUse,
+                tag: item.badge || 'Certified Grade A',
+                stockStatus: item.stockStatus || 'In Stock',
+                buttonText: item.buttonText || 'Inquire via WhatsApp',
+                buttonLink: item.buttonLink || '#'
+              };
+            });
             setStockItems(mappedItems);
           } else {
             setStockItems(DEFAULT_STOCK_ITEMS);
@@ -363,6 +372,10 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
               {stockItems.map((item) => {
                 const inquiryMessage = `Hi CCT Delhi, I am interested in buying the *${item.title}* listed in your Live Stock Arrival Gallery for *${item.price}*.\n\n💻 *Specs:* ${item.description}\n\nIs this system currently available for sale? Please share details.`;
                 const whatsappUrl = `https://wa.me/918527208085?text=${encodeURIComponent(inquiryMessage)}`;
+                const finalButtonLink = (!item.buttonLink || item.buttonLink.trim() === '' || item.buttonLink.trim() === '#')
+                  ? whatsappUrl
+                  : item.buttonLink;
+                const finalButtonText = item.buttonText || 'Inquire via WhatsApp';
                 
                 return (
                   <motion.div
@@ -380,7 +393,7 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-3 left-3 bg-[#1e40af] text-white text-[9px] font-black tracking-widest uppercase py-1 px-2.5 rounded-full shadow border border-blue-400/20">
-                        In Stock
+                        {item.stockStatus || 'In Stock'}
                       </div>
                     </div>
 
@@ -412,13 +425,13 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
 
                         {/* WhatsApp Inquiry Link */}
                         <a
-                          href={whatsappUrl}
+                          href={finalButtonLink}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full inline-flex items-center justify-center gap-2 bg-[#16a34a] hover:bg-green-700 text-white font-black text-[10px] uppercase tracking-widest py-3 rounded-lg transition shadow-md shadow-emerald-100"
                         >
                           <MessageSquare className="h-3.5 w-3.5" />
-                          Inquire via WhatsApp
+                          {finalButtonText}
                         </a>
                       </div>
                     </div>

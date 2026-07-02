@@ -872,7 +872,13 @@ export async function fetchLaptopSales(): Promise<LaptopSaleCard[]> {
   }
 }
 
+let cachedLaptopGallery: LaptopGalleryItem[] | null = null;
+
 export async function fetchLaptopGallery(): Promise<LaptopGalleryItem[]> {
+  if (cachedLaptopGallery) {
+    return cachedLaptopGallery;
+  }
+
   try {
     const response = await fetch(LAPTOP_GALLERY_CSV_URL);
     if (!response.ok) {
@@ -888,40 +894,54 @@ export async function fetchLaptopGallery(): Promise<LaptopGalleryItem[]> {
 
     const idIdx = headers.indexOf('id');
     const imgUrlIdx = headers.indexOf('imageurl');
+    const stockStatusIdx = headers.indexOf('stockstatus');
+    const badgeIdx = headers.indexOf('badge');
+    const titleIdx = headers.indexOf('title');
+    const specificationsIdx = headers.indexOf('specifications');
+    const priceIdx = headers.indexOf('price');
+    const buttonTextIdx = headers.indexOf('buttontext');
+    const buttonLinkIdx = headers.indexOf('buttonlink');
     const activeIdx = headers.indexOf('active');
     const sortIdx = headers.indexOf('sortorder');
-    const brandIdx = headers.indexOf('brand');
-    const priceIdx = headers.indexOf('price');
 
     const galleryItems: LaptopGalleryItem[] = [];
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       if (row.length === 0) continue;
 
-      const imageUrl = imgUrlIdx !== -1 && row[imgUrlIdx] ? row[imgUrlIdx].trim() : '';
-      if (!imageUrl) continue; // skip if imageUrl is empty
-
-      const id = idIdx !== -1 && row[idIdx] ? row[idIdx] : String(i);
       const activeStr = activeIdx !== -1 && row[activeIdx] ? row[activeIdx].trim().toLowerCase() : 'true';
       const active = activeStr === 'true' || activeStr === 'yes' || activeStr === '1';
       
       if (!active) continue; // display only active items
 
-      const sortOrder = sortIdx !== -1 && row[sortIdx] ? parseInt(row[sortIdx], 10) : i;
-      const brand = brandIdx !== -1 && row[brandIdx] ? row[brandIdx].trim() : undefined;
+      const id = idIdx !== -1 && row[idIdx] ? row[idIdx].trim() : String(i);
+      const imageUrl = imgUrlIdx !== -1 && row[imgUrlIdx] ? row[imgUrlIdx].trim() : '';
+      const stockStatus = stockStatusIdx !== -1 && row[stockStatusIdx] ? row[stockStatusIdx].trim() : undefined;
+      const badge = badgeIdx !== -1 && row[badgeIdx] ? row[badgeIdx].trim() : undefined;
+      const title = titleIdx !== -1 && row[titleIdx] ? row[titleIdx].trim() : undefined;
+      const specifications = specificationsIdx !== -1 && row[specificationsIdx] ? row[specificationsIdx].trim() : undefined;
       const price = priceIdx !== -1 && row[priceIdx] ? row[priceIdx].trim() : undefined;
+      const buttonText = buttonTextIdx !== -1 && row[buttonTextIdx] ? row[buttonTextIdx].trim() : undefined;
+      const buttonLink = buttonLinkIdx !== -1 && row[buttonLinkIdx] ? row[buttonLinkIdx].trim() : undefined;
+      const sortOrder = sortIdx !== -1 && row[sortIdx] ? parseInt(row[sortIdx], 10) : i;
 
       galleryItems.push({
         id,
         imageUrl,
+        stockStatus,
+        badge,
+        title,
+        specifications,
+        price,
+        buttonText,
+        buttonLink,
         active,
-        sortOrder: isNaN(sortOrder) ? i : sortOrder,
-        brand: brand || undefined,
-        price: price || undefined
+        sortOrder: isNaN(sortOrder) ? i : sortOrder
       });
     }
 
-    return galleryItems.sort((a, b) => a.sortOrder - b.sortOrder);
+    cachedLaptopGallery = galleryItems.sort((a, b) => a.sortOrder - b.sortOrder);
+    return cachedLaptopGallery;
   } catch (error) {
     console.error('Failed to fetch laptop gallery from Google Sheets:', error);
     throw error;
