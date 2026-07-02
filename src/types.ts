@@ -99,5 +99,14 @@ export interface LaptopSaleCard {
   icon?: string;
 }
 
+export interface LaptopGalleryItem {
+  id: string;
+  imageUrl: string;
+  active: boolean;
+  sortOrder: number;
+  brand?: string;
+  price?: string;
+}
+
 
 

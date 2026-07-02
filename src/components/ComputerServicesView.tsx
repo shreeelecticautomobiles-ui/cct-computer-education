@@ -1,12 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ShoppingBag, Wrench, Cpu, Phone, Check, MapPin, Sparkles } from 'lucide-react';
-import { fetchLaptopSaleInfo, fetchServices, fetchLaptopSales, FALLBACK_SERVICES, FALLBACK_LAPTOP_SALES } from '../services/googleSheets';
-import { SheetService, LaptopSaleCard } from '../types';
+import { 
+  ShoppingBag, Wrench, Cpu, Phone, Check, MapPin, Sparkles,
+  Tag, Image as ImageIcon, MessageSquare, Monitor, Laptop, HelpCircle
+} from 'lucide-react';
+import { fetchLaptopSaleInfo, fetchServices, fetchLaptopSales, fetchLaptopGallery, FALLBACK_SERVICES, FALLBACK_LAPTOP_SALES } from '../services/googleSheets';
+import { SheetService, LaptopSaleCard, LaptopGalleryItem } from '../types';
 
 interface ComputerServicesViewProps {
   initialTab?: 'services' | 'laptop-sale';
 }
+
+interface StockItem {
+  id: string;
+  title: string;
+  description: string;
+  price: string;
+  image: string;
+  tag: string;
+  isCustom?: boolean;
+}
+
+const DEFAULT_STOCK_ITEMS: StockItem[] = [
+  {
+    id: 'stock-1',
+    title: 'Lenovo ThinkPad L480',
+    description: 'Intel Core i5 8th Gen | 8GB RAM | 256GB SSD | 14-inch IPS Screen | Win 11 Pro',
+    price: '₹13,800',
+    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=600',
+    tag: 'Grade A++ Like New'
+  },
+  {
+    id: 'stock-2',
+    title: 'HP EliteBook 840 G5',
+    description: 'Intel Core i5 8th Gen | 16GB RAM | 512GB SSD | Backlit Keyboard | Full HD IPS',
+    price: '₹16,500',
+    image: 'https://images.unsplash.com/photo-1589561096644-4252277d10db?auto=format&fit=crop&q=80&w=600',
+    tag: 'Premium Metal Body'
+  },
+  {
+    id: 'stock-3',
+    title: 'Dell Latitude 7490',
+    description: 'Intel Core i7 8th Gen | 8GB RAM | 256GB SSD | Sleek Ultrabook Design',
+    price: '₹18,500',
+    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=600',
+    tag: 'i7 High Performance'
+  },
+  {
+    id: 'stock-4',
+    title: 'Budget Student Laptop',
+    description: 'Intel Core i3 6th Gen | 4GB RAM | 128GB SSD | Perfect for basic studies & Excel',
+    price: '₹8,500',
+    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=600',
+    tag: 'Best Budget Option'
+  }
+];
 
 export default function ComputerServicesView({ initialTab }: ComputerServicesViewProps) {
   const [laptopInfo, setLaptopInfo] = useState({
@@ -16,22 +64,47 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
   const [services, setServices] = useState<SheetService[]>(FALLBACK_SERVICES);
   const [laptopSales, setLaptopSales] = useState<LaptopSaleCard[]>(FALLBACK_LAPTOP_SALES);
 
+  // Live Stock Gallery State
+  const [stockItems, setStockItems] = useState<StockItem[]>(DEFAULT_STOCK_ITEMS);
+
   useEffect(() => {
     let active = true;
     async function loadAllData() {
       try {
-        const [info, servicesData, salesData] = await Promise.all([
+        const [info, servicesData, salesData, galleryData] = await Promise.all([
           fetchLaptopSaleInfo(),
           fetchServices(),
-          fetchLaptopSales()
+          fetchLaptopSales(),
+          fetchLaptopGallery().catch(err => {
+            console.error('Error fetching laptop gallery, using fallback:', err);
+            return [];
+          })
         ]);
         if (active) {
           setLaptopInfo(info);
           setServices(servicesData);
           setLaptopSales(salesData);
+
+          const validGalleryItems = galleryData.filter(item => item.imageUrl && item.imageUrl.trim() !== '');
+          if (validGalleryItems.length > 0) {
+            const mappedItems: StockItem[] = validGalleryItems.map((item, idx) => ({
+              id: item.id,
+              title: item.brand || `Premium Laptop Stock ${idx + 1}`,
+              description: 'Thoroughly tested pre-owned computer workstation in pristine condition. Contact for full specs.',
+              price: item.price || `Contact for Price`,
+              image: item.imageUrl,
+              tag: 'Certified Grade A'
+            }));
+            setStockItems(mappedItems);
+          } else {
+            setStockItems(DEFAULT_STOCK_ITEMS);
+          }
         }
       } catch (err) {
         console.error('Error loading dynamic computer services data:', err);
+        if (active) {
+          setStockItems(DEFAULT_STOCK_ITEMS);
+        }
       }
     }
     loadAllData();
@@ -266,6 +339,92 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
                   )}
                 </div>
               ))}
+            </div>
+          </section>
+
+          {/* ================= NEW STOCK ARRIVALS LIVE GALLERY ================= */}
+          <section className="space-y-8 pt-12 border-t border-slate-200">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="text-left space-y-2 max-w-2xl">
+                <span className="inline-flex items-center gap-1 text-[#1e40af] text-xs font-mono font-black uppercase tracking-widest">
+                  <Sparkles className="h-3 w-3 animate-pulse" /> LIVE STOCK ARRIVAL GALLERY
+                </span>
+                <h3 className="text-2xl sm:text-4xl font-black text-[#0f172a] uppercase tracking-tight">
+                  Browse Active Laptop & Computer Inventory
+                </h3>
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed">
+                  These systems are currently available for direct purchase at our Madangir outlet. We update this catalog live. Click any item to enquire via WhatsApp.
+                </p>
+              </div>
+            </div>
+
+            {/* LIVE STOCK GRID DISPLAY */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stockItems.map((item) => {
+                const inquiryMessage = `Hi CCT Delhi, I am interested in buying the *${item.title}* listed in your Live Stock Arrival Gallery for *${item.price}*.\n\n💻 *Specs:* ${item.description}\n\nIs this system currently available for sale? Please share details.`;
+                const whatsappUrl = `https://wa.me/918527208085?text=${encodeURIComponent(inquiryMessage)}`;
+                
+                return (
+                  <motion.div
+                    layout
+                    key={item.id}
+                    className="bg-white border border-[#bfdbfe]/50 hover:border-[#1e40af] rounded-2xl overflow-hidden flex flex-col justify-between group transition duration-300 hover:-translate-y-1 hover:shadow-[0_4px_20px_rgba(30,64,175,0.08)] w-full text-slate-800 text-left relative"
+                  >
+                    {/* Product Image */}
+                    <div className="relative aspect-[16:11] w-full bg-slate-50 overflow-hidden border-b border-blue-100">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        referrerPolicy="no-referrer"
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3 left-3 bg-[#1e40af] text-white text-[9px] font-black tracking-widest uppercase py-1 px-2.5 rounded-full shadow border border-blue-400/20">
+                        In Stock
+                      </div>
+                    </div>
+
+                    {/* Product details */}
+                    <div className="p-5 flex-grow flex flex-col justify-between space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] text-[9px] font-extrabold px-2 py-0.5 rounded-md">
+                            <Tag className="h-2.5 w-2.5" />
+                            {item.tag}
+                          </span>
+                        </div>
+
+                        <h4 className="text-md font-black text-[#0f172a] uppercase group-hover:text-[#1e40af] transition-colors leading-tight">
+                          {item.title}
+                        </h4>
+                        
+                        <p className="text-[11px] text-[#374151] font-semibold leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      <div className="space-y-3 pt-3 border-t border-slate-100">
+                        {/* Price Tag Display */}
+                        <div className="flex items-baseline justify-between">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">Sale Price</span>
+                          <span className="text-lg font-black text-[#1e40af]">{item.price}</span>
+                        </div>
+
+                        {/* WhatsApp Inquiry Link */}
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full inline-flex items-center justify-center gap-2 bg-[#16a34a] hover:bg-green-700 text-white font-black text-[10px] uppercase tracking-widest py-3 rounded-lg transition shadow-md shadow-emerald-100"
+                        >
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          Inquire via WhatsApp
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </section>
 

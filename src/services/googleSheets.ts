@@ -1,4 +1,4 @@
-import { SheetCourse, SheetCrashCourse, LaptopSaleInfo, Announcement, SheetService, LaptopSaleCard } from '../types';
+import { SheetCourse, SheetCrashCourse, LaptopSaleInfo, Announcement, SheetService, LaptopSaleCard, LaptopGalleryItem } from '../types';
 
 const MAIN_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=0&single=true&output=csv';
 const CRASH_COURSES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1682720920&single=true&output=csv';
@@ -6,6 +6,7 @@ const LAPTOP_SALE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTt
 const ANNOUNCEMENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=675698559&single=true&output=csv';
 const SERVICES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1883481716&single=true&output=csv';
 const LAPTOP_CATALOGUE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=1850733542&single=true&output=csv';
+const LAPTOP_GALLERY_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtxk8sFkfAkRY6O5oqhUHPYcSDUIHCl3unaINUDGuWwEwdA7-l2yGN2eXuFLEYqEJTrsBMkfINZc91/pub?gid=640870169&single=true&output=csv';
 
 
 
@@ -868,6 +869,62 @@ export async function fetchLaptopSales(): Promise<LaptopSaleCard[]> {
   } catch (error) {
     console.error('Failed to fetch laptop sales from Google Sheets. Using fallback data.', error);
     return FALLBACK_LAPTOP_SALES;
+  }
+}
+
+export async function fetchLaptopGallery(): Promise<LaptopGalleryItem[]> {
+  try {
+    const response = await fetch(LAPTOP_GALLERY_CSV_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error fetching laptop gallery: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    if (rows.length < 2) {
+      return [];
+    }
+
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+
+    const idIdx = headers.indexOf('id');
+    const imgUrlIdx = headers.indexOf('imageurl');
+    const activeIdx = headers.indexOf('active');
+    const sortIdx = headers.indexOf('sortorder');
+    const brandIdx = headers.indexOf('brand');
+    const priceIdx = headers.indexOf('price');
+
+    const galleryItems: LaptopGalleryItem[] = [];
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (row.length === 0) continue;
+
+      const imageUrl = imgUrlIdx !== -1 && row[imgUrlIdx] ? row[imgUrlIdx].trim() : '';
+      if (!imageUrl) continue; // skip if imageUrl is empty
+
+      const id = idIdx !== -1 && row[idIdx] ? row[idIdx] : String(i);
+      const activeStr = activeIdx !== -1 && row[activeIdx] ? row[activeIdx].trim().toLowerCase() : 'true';
+      const active = activeStr === 'true' || activeStr === 'yes' || activeStr === '1';
+      
+      if (!active) continue; // display only active items
+
+      const sortOrder = sortIdx !== -1 && row[sortIdx] ? parseInt(row[sortIdx], 10) : i;
+      const brand = brandIdx !== -1 && row[brandIdx] ? row[brandIdx].trim() : undefined;
+      const price = priceIdx !== -1 && row[priceIdx] ? row[priceIdx].trim() : undefined;
+
+      galleryItems.push({
+        id,
+        imageUrl,
+        active,
+        sortOrder: isNaN(sortOrder) ? i : sortOrder,
+        brand: brand || undefined,
+        price: price || undefined
+      });
+    }
+
+    return galleryItems.sort((a, b) => a.sortOrder - b.sortOrder);
+  } catch (error) {
+    console.error('Failed to fetch laptop gallery from Google Sheets:', error);
+    throw error;
   }
 }
 
