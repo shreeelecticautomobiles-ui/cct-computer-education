@@ -37,6 +37,15 @@ export default function ContactView() {
       return;
     }
     setSubmitted(true);
+
+    // Construct WhatsApp message and redirect
+    const messageText = `Hello CCT Delhi, I would like to register for a course:
+*Name:* ${formData.name}
+*Phone:* ${formData.phone}
+*Course Interested:* ${formData.course}`;
+    const encodedMessage = encodeURIComponent(messageText);
+    const whatsappUrl = `https://wa.me/918527208085?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (

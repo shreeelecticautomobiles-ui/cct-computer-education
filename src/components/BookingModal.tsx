@@ -32,6 +32,18 @@ export default function BookingModal({ isOpen, onClose, selectedCourse = 'Genera
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
+
+      // Construct WhatsApp message and redirect
+      const messageText = `Hello CCT Delhi, I would like to book a free demo class:
+*Name:* ${form.name}
+*Email:* ${form.email}
+*Phone:* ${form.phone}
+*Course Stream:* ${form.course}
+*Learning Mode:* ${form.mode}
+*Preferred Batch Slot:* ${form.slot}`;
+      const encodedMessage = encodeURIComponent(messageText);
+      const whatsappUrl = `https://wa.me/918527208085?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
     }, 1200);
   };
 

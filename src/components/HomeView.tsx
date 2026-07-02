@@ -19,6 +19,32 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
     price: '₹6,500',
     warranty: '1 Month Testing Warranty'
   });
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submittedName, setSubmittedName] = useState('');
+
+  const handleHomeSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const name = data.get('name') as string;
+    const phone = data.get('phone') as string;
+    const course = data.get('course') as string;
+
+    if (!name || !phone) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    setSubmittedName(name);
+    setFormSubmitted(true);
+
+    const messageText = `Hello CCT Delhi, I would like to book a free demo class / get counseling:
+*Name:* ${name}
+*Phone:* ${phone}
+*Course of Interest:* ${course}`;
+    const encodedMessage = encodeURIComponent(messageText);
+    const whatsappUrl = `https://wa.me/918527208085?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   useEffect(() => {
     let active = true;
@@ -302,68 +328,100 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
           <div style={{ background: '#1e40af', color: 'white', padding: '4px 16px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', marginBottom: '16px' }}>
             FREE CAREER COUNSELING
           </div>
-          <h2 style={{ color: '#0f172a', fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px' }}>
-            Get Free Demo Class Today
-          </h2>
-          <p style={{ color: '#374151', marginBottom: '28px', fontSize: '15px' }}>
-            Fill the form — we will call you back within 2 hours
-          </p>
-          <form 
-            action="https://formspree.io/f/YOUR_FORM_ID" 
-            method="POST"
-            style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}
-          >
-            <input 
-              type="text" 
-              name="name" 
-              placeholder="Your Full Name" 
-              required
-              style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
-            />
-            <input 
-              type="tel" 
-              name="phone" 
-              placeholder="Your Mobile Number" 
-              required
-              style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
-            />
-            <select 
-              name="course" 
-              required
-              style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', color: '#374151' }}
-            >
-              <option value="">Select Course You Are Interested In</option>
-              {courses.length > 0 ? (
-                courses.map((c) => (
-                  <option key={c.id} value={c.title}>
-                    {c.title} ({c.duration})
-                  </option>
-                ))
-              ) : (
-                <>
-                  <option>Master in Software Engineering (1 Year)</option>
-                  <option>Diploma in MS-Office (6 Month)</option>
-                  <option>Graphics Designing & Multimedia</option>
-                  <option>Certificate in Web Designing</option>
-                  <option>C & C++ Programming</option>
-                  <option>Advance Tally Course</option>
-                  <option>Basic Computer Application</option>
-                  <option>AutoCAD Course (3 Month)</option>
-                  <option>Hardware & Repairing</option>
-                  <option>Crash Course (1-4 Weeks)</option>
-                  <option>O Level / BCA / MCA Coaching</option>
-                </>
-              )}
-              <option>Not Sure - Need Guidance</option>
-            </select>
-            <button 
-              type="submit"
-              className="hover:bg-blue-800 transition"
-              style={{ background: '#1e40af', color: 'white', padding: '16px', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', width: '100%' }}
-            >
-              Get Free Counseling Call →
-            </button>
-          </form>
+          {formSubmitted ? (
+            <div className="bg-emerald-50 border border-emerald-200 p-8 rounded-2xl text-center space-y-4 my-6">
+              <div className="h-12 w-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-lg font-bold">✓</div>
+              <div className="space-y-1">
+                <h4 className="text-sm font-black text-slate-900 uppercase">Request Received!</h4>
+                <p className="text-xs text-emerald-700 leading-relaxed font-semibold">
+                  Thank you, <span className="font-extrabold">{submittedName}</span>. We are redirecting you to WhatsApp to start your direct enrollment counseling chat with us!
+                </p>
+                <p className="text-[11px] text-slate-500 pt-2 font-medium">
+                  If you weren't redirected automatically, please click below to chat:
+                </p>
+              </div>
+              <a
+                href={`https://wa.me/918527208085?text=${encodeURIComponent("Hello CCT Delhi, I would like to book a free demo class / get counseling")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-[#25d366] hover:bg-green-600 text-white text-xs font-black uppercase tracking-wider py-3 px-6 rounded-xl transition duration-150"
+              >
+                Chat on WhatsApp Now
+              </a>
+              <div className="pt-2">
+                <button
+                  onClick={() => setFormSubmitted(false)}
+                  className="text-[10px] text-slate-500 hover:underline font-bold uppercase cursor-pointer"
+                >
+                  Submit Another Inquiry
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h2 style={{ color: '#0f172a', fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px' }}>
+                Get Free Demo Class Today
+              </h2>
+              <p style={{ color: '#374151', marginBottom: '28px', fontSize: '15px' }}>
+                Fill the form — we will call you back within 2 hours
+              </p>
+              <form 
+                onSubmit={handleHomeSubmit}
+                style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}
+              >
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Your Full Name" 
+                  required
+                  style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
+                />
+                <input 
+                  type="tel" 
+                  name="phone" 
+                  placeholder="Your Mobile Number" 
+                  required
+                  style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
+                />
+                <select 
+                  name="course" 
+                  required
+                  style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', color: '#374151' }}
+                >
+                  <option value="">Select Course You Are Interested In</option>
+                  {courses.length > 0 ? (
+                    courses.map((c) => (
+                      <option key={c.id} value={c.title}>
+                        {c.title} ({c.duration})
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option>Master in Software Engineering (1 Year)</option>
+                      <option>Diploma in MS-Office (6 Month)</option>
+                      <option>Graphics Designing & Multimedia</option>
+                      <option>Certificate in Web Designing</option>
+                      <option>C & C++ Programming</option>
+                      <option>Advance Tally Course</option>
+                      <option>Basic Computer Application</option>
+                      <option>AutoCAD Course (3 Month)</option>
+                      <option>Hardware & Repairing</option>
+                      <option>Crash Course (1-4 Weeks)</option>
+                      <option>O Level / BCA / MCA Coaching</option>
+                    </>
+                  )}
+                  <option>Not Sure - Need Guidance</option>
+                </select>
+                <button 
+                  type="submit"
+                  className="hover:bg-blue-800 transition"
+                  style={{ background: '#1e40af', color: 'white', padding: '16px', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', width: '100%' }}
+                >
+                  Get Free Counseling Call →
+                </button>
+              </form>
+            </>
+          )}
           <p style={{ marginTop: '16px', color: '#6b7280', fontSize: '13px' }}>
             Or directly call: <a href="tel:8527208085" style={{ color: '#1e40af', fontWeight: 700 }}>8527208085</a> &nbsp;|&nbsp; Enquire on{' '}
             <a href="https://wa.me/918527208085" style={{ color: '#25d366', fontWeight: 700 }}>WhatsApp Us</a>
