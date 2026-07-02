@@ -21,6 +21,11 @@ export default function BookingModal({ isOpen, onClose, selectedCourse = 'Genera
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const getWhatsAppUrl = () => {
+    const message = `Hello CCT Delhi, I would like to book a Free Demo Class.\n\n👤 *Name:* ${form.name}\n📧 *Email:* ${form.email}\n📞 *Phone:* ${form.phone}\n📚 *Course:* ${form.course}\n💻 *Mode:* ${form.mode}\n⏰ *Slot:* ${form.slot}`;
+    return `https://wa.me/918527208085?text=${encodeURIComponent(message)}`;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.phone || !form.slot) {
@@ -32,6 +37,9 @@ export default function BookingModal({ isOpen, onClose, selectedCourse = 'Genera
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
+      
+      const url = getWhatsAppUrl();
+      window.open(url, '_blank');
     }, 1200);
   };
 
@@ -267,16 +275,26 @@ export default function BookingModal({ isOpen, onClose, selectedCourse = 'Genera
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSubmitted(false);
-                      onClose();
-                    }}
-                    className="cursor-pointer inline-flex items-center justify-center rounded-lg border border-slate-200 px-6 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
-                    id="finish-booking-btn"
-                  >
-                    Return to Portal
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                    <a
+                      href={getWhatsAppUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold py-2.5 px-5 rounded-lg transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/10 text-center"
+                    >
+                      💬 Open WhatsApp Chat
+                    </a>
+                    <button
+                      onClick={() => {
+                        setSubmitted(false);
+                        onClose();
+                      }}
+                      className="cursor-pointer w-full sm:w-auto inline-flex items-center justify-center rounded-lg border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                      id="finish-booking-btn"
+                    >
+                      Return to Portal
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </div>

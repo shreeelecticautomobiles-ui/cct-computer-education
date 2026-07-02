@@ -30,6 +30,11 @@ export default function ContactView() {
     'Other Vocational / Basic Course'
   ];
 
+  const getWhatsAppUrl = () => {
+    const message = `Hello CCT Delhi, I would like to inquire about class registration.\n\n👤 *Name:* ${formData.name}\n📞 *Phone:* ${formData.phone}\n📚 *Course:* ${formData.course}`;
+    return `https://wa.me/918527208085?text=${encodeURIComponent(message)}`;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) {
@@ -37,6 +42,9 @@ export default function ContactView() {
       return;
     }
     setSubmitted(true);
+
+    const url = getWhatsAppUrl();
+    window.open(url, '_blank');
   };
 
   return (
@@ -199,15 +207,26 @@ export default function ContactView() {
                   <div className="space-y-2">
                     <h4 className="text-md font-black uppercase text-[#0f172a]">Application Received!</h4>
                     <p className="text-xs text-[#374151] leading-relaxed font-semibold">
-                      Thank you, <span className="font-extrabold text-[#0f172a]">{formData.name}</span>. An admissions counselor will phone you soon at <span className="font-extrabold text-[#0f172a]">{formData.phone}</span> regarding your entry for <span className="font-extrabold text-[#0f172a]">{formData.course}</span>.
+                      Thank you, <span className="font-extrabold text-[#0f172a]">{formData.name}</span>. We are redirecting you to WhatsApp to directly message our admissions desk regarding your entry for <span className="font-extrabold text-[#0f172a]">{formData.course}</span>.
                     </p>
                   </div>
-                  <button
-                    onClick={() => { setSubmitted(false); setFormData({ name: '', phone: '', course: 'Master in Software Engineering' }); }}
-                    className="cursor-pointer bg-[#1e40af] hover:bg-[#1d4ed8] text-white text-[10px] font-black uppercase tracking-widest py-3 px-6 rounded-lg transition"
-                  >
-                    Submit New Inquiry
-                  </button>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
+                    <a
+                      href={getWhatsAppUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-white text-[11px] font-black uppercase tracking-widest py-3.5 px-6 rounded-lg transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/10 text-center"
+                    >
+                      💬 Open WhatsApp Chat
+                    </a>
+                    <button
+                      onClick={() => { setSubmitted(false); setFormData({ name: '', phone: '', course: 'Master in Software Engineering' }); }}
+                      className="cursor-pointer w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-black uppercase tracking-widest py-3.5 px-6 rounded-lg transition"
+                    >
+                      New Inquiry
+                    </button>
+                  </div>
                 </motion.div>
               ) : (
                 <motion.form 
