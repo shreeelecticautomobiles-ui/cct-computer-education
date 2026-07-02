@@ -90,8 +90,7 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
 
           if (galleryData.length > 0) {
             const mappedItems: StockItem[] = galleryData.map((item, idx) => {
-              const defaultPlaceholder = DEFAULT_STOCK_ITEMS[idx % DEFAULT_STOCK_ITEMS.length]?.image || DEFAULT_STOCK_ITEMS[0].image;
-              const imageToUse = (item.imageUrl && item.imageUrl.trim() !== '') ? item.imageUrl : defaultPlaceholder;
+              const imageToUse = (item.imageUrl && item.imageUrl.trim() !== '') ? item.imageUrl : '';
               return {
                 id: item.id,
                 title: item.title || `Premium Laptop Stock ${idx + 1}`,
@@ -384,14 +383,22 @@ export default function ComputerServicesView({ initialTab }: ComputerServicesVie
                     className="bg-white border border-[#bfdbfe]/50 hover:border-[#1e40af] rounded-2xl overflow-hidden flex flex-col justify-between group transition duration-300 hover:-translate-y-1 hover:shadow-[0_4px_20px_rgba(30,64,175,0.08)] w-full text-slate-800 text-left relative"
                   >
                     {/* Product Image */}
-                    <div className="relative aspect-[16:11] w-full bg-slate-50 overflow-hidden border-b border-blue-100">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                    <div className="relative aspect-[16:11] w-full bg-slate-50 overflow-hidden border-b border-blue-100 flex items-center justify-center">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-300 group-hover:text-[#1e40af] transition-colors relative">
+                          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                          <Laptop className="h-12 w-12 stroke-[1.2] mb-2 text-slate-400" />
+                          <span className="text-[10px] font-black tracking-widest uppercase text-slate-400">Photo Coming Soon</span>
+                        </div>
+                      )}
                       <div className="absolute top-3 left-3 bg-[#1e40af] text-white text-[9px] font-black tracking-widest uppercase py-1 px-2.5 rounded-full shadow border border-blue-400/20">
                         {item.stockStatus || 'In Stock'}
                       </div>

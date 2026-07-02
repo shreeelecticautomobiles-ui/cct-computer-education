@@ -872,6 +872,36 @@ export async function fetchLaptopSales(): Promise<LaptopSaleCard[]> {
   }
 }
 
+function cleanImageUrl(url: string): string {
+  if (!url) return '';
+  const cleaned = url.trim();
+  
+  // 1. If it's BBCode with [img]...[/img]
+  const imgBbRegex = /\[img\](.*?)\[\/img\]/i;
+  const match = cleaned.match(imgBbRegex);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  
+  // 2. If there is HTML like <img src="..." />
+  const htmlSrcRegex = /src=["'](.*?)["']/i;
+  const htmlMatch = cleaned.match(htmlSrcRegex);
+  if (htmlMatch && htmlMatch[1]) {
+    return htmlMatch[1].trim();
+  }
+
+  // 3. Extract any url starting with http
+  const httpUrlRegex = /(https?:\/\/[^\s\][<>"]+)/gi;
+  const urls = cleaned.match(httpUrlRegex);
+  if (urls && urls.length > 0) {
+    const imgUrl = urls.find(u => /\.(jpg|jpeg|png|gif|webp|svg)/i.test(u));
+    if (imgUrl) return imgUrl;
+    return urls[0];
+  }
+
+  return cleaned;
+}
+
 let cachedLaptopGallery: LaptopGalleryItem[] | null = null;
 
 export async function fetchLaptopGallery(): Promise<LaptopGalleryItem[]> {
@@ -915,7 +945,8 @@ export async function fetchLaptopGallery(): Promise<LaptopGalleryItem[]> {
       if (!active) continue; // display only active items
 
       const id = idIdx !== -1 && row[idIdx] ? row[idIdx].trim() : String(i);
-      const imageUrl = imgUrlIdx !== -1 && row[imgUrlIdx] ? row[imgUrlIdx].trim() : '';
+      const rawImageUrl = imgUrlIdx !== -1 && row[imgUrlIdx] ? row[imgUrlIdx].trim() : '';
+      const imageUrl = cleanImageUrl(rawImageUrl);
       const stockStatus = stockStatusIdx !== -1 && row[stockStatusIdx] ? row[stockStatusIdx].trim() : undefined;
       const badge = badgeIdx !== -1 && row[badgeIdx] ? row[badgeIdx].trim() : undefined;
       const title = titleIdx !== -1 && row[titleIdx] ? row[titleIdx].trim() : undefined;
