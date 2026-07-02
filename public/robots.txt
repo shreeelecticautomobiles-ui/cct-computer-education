@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /assets/.aistudio/
+
+Sitemap: https://www.cctcomputereducation.in/sitemap.xml
