@@ -19,32 +19,6 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
     price: '₹6,500',
     warranty: '1 Month Testing Warranty'
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [submittedName, setSubmittedName] = useState('');
-
-  const handleHomeSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const name = data.get('name') as string;
-    const phone = data.get('phone') as string;
-    const course = data.get('course') as string;
-
-    if (!name || !phone) {
-      alert('Please fill out all fields.');
-      return;
-    }
-
-    setSubmittedName(name);
-    setFormSubmitted(true);
-
-    const messageText = `Hello CCT Delhi, I would like to book a free demo class / get counseling:
-*Name:* ${name}
-*Phone:* ${phone}
-*Course of Interest:* ${course}`;
-    const encodedMessage = encodeURIComponent(messageText);
-    const whatsappUrl = `https://wa.me/918527208085?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   useEffect(() => {
     let active = true;
@@ -328,100 +302,68 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
           <div style={{ background: '#1e40af', color: 'white', padding: '4px 16px', borderRadius: '999px', fontSize: '12px', fontWeight: '700', display: 'inline-block', marginBottom: '16px' }}>
             FREE CAREER COUNSELING
           </div>
-          {formSubmitted ? (
-            <div className="bg-emerald-50 border border-emerald-200 p-8 rounded-2xl text-center space-y-4 my-6">
-              <div className="h-12 w-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-lg font-bold">✓</div>
-              <div className="space-y-1">
-                <h4 className="text-sm font-black text-slate-900 uppercase">Request Received!</h4>
-                <p className="text-xs text-emerald-700 leading-relaxed font-semibold">
-                  Thank you, <span className="font-extrabold">{submittedName}</span>. We are redirecting you to WhatsApp to start your direct enrollment counseling chat with us!
-                </p>
-                <p className="text-[11px] text-slate-500 pt-2 font-medium">
-                  If you weren't redirected automatically, please click below to chat:
-                </p>
-              </div>
-              <a
-                href={`https://wa.me/918527208085?text=${encodeURIComponent("Hello CCT Delhi, I would like to book a free demo class / get counseling")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-[#25d366] hover:bg-green-600 text-white text-xs font-black uppercase tracking-wider py-3 px-6 rounded-xl transition duration-150"
-              >
-                Chat on WhatsApp Now
-              </a>
-              <div className="pt-2">
-                <button
-                  onClick={() => setFormSubmitted(false)}
-                  className="text-[10px] text-slate-500 hover:underline font-bold uppercase cursor-pointer"
-                >
-                  Submit Another Inquiry
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <h2 style={{ color: '#0f172a', fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px' }}>
-                Get Free Demo Class Today
-              </h2>
-              <p style={{ color: '#374151', marginBottom: '28px', fontSize: '15px' }}>
-                Fill the form — we will call you back within 2 hours
-              </p>
-              <form 
-                onSubmit={handleHomeSubmit}
-                style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}
-              >
-                <input 
-                  type="text" 
-                  name="name" 
-                  placeholder="Your Full Name" 
-                  required
-                  style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
-                />
-                <input 
-                  type="tel" 
-                  name="phone" 
-                  placeholder="Your Mobile Number" 
-                  required
-                  style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
-                />
-                <select 
-                  name="course" 
-                  required
-                  style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', color: '#374151' }}
-                >
-                  <option value="">Select Course You Are Interested In</option>
-                  {courses.length > 0 ? (
-                    courses.map((c) => (
-                      <option key={c.id} value={c.title}>
-                        {c.title} ({c.duration})
-                      </option>
-                    ))
-                  ) : (
-                    <>
-                      <option>Master in Software Engineering (1 Year)</option>
-                      <option>Diploma in MS-Office (6 Month)</option>
-                      <option>Graphics Designing & Multimedia</option>
-                      <option>Certificate in Web Designing</option>
-                      <option>C & C++ Programming</option>
-                      <option>Advance Tally Course</option>
-                      <option>Basic Computer Application</option>
-                      <option>AutoCAD Course (3 Month)</option>
-                      <option>Hardware & Repairing</option>
-                      <option>Crash Course (1-4 Weeks)</option>
-                      <option>O Level / BCA / MCA Coaching</option>
-                    </>
-                  )}
-                  <option>Not Sure - Need Guidance</option>
-                </select>
-                <button 
-                  type="submit"
-                  className="hover:bg-blue-800 transition"
-                  style={{ background: '#1e40af', color: 'white', padding: '16px', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', width: '100%' }}
-                >
-                  Get Free Counseling Call →
-                </button>
-              </form>
-            </>
-          )}
+          <h2 style={{ color: '#0f172a', fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px' }}>
+            Get Free Demo Class Today
+          </h2>
+          <p style={{ color: '#374151', marginBottom: '28px', fontSize: '15px' }}>
+            Fill the form — we will call you back within 2 hours
+          </p>
+          <form 
+            action="https://formspree.io/f/YOUR_FORM_ID" 
+            method="POST"
+            style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}
+          >
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="Your Full Name" 
+              required
+              style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
+            />
+            <input 
+              type="tel" 
+              name="phone" 
+              placeholder="Your Mobile Number" 
+              required
+              style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box' }}
+            />
+            <select 
+              name="course" 
+              required
+              style={{ padding: '14px 16px', border: '1.5px solid #bfdbfe', borderRadius: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', color: '#374151' }}
+            >
+              <option value="">Select Course You Are Interested In</option>
+              {courses.length > 0 ? (
+                courses.map((c) => (
+                  <option key={c.id} value={c.title}>
+                    {c.title} ({c.duration})
+                  </option>
+                ))
+              ) : (
+                <>
+                  <option>Master in Software Engineering (1 Year)</option>
+                  <option>Diploma in MS-Office (6 Month)</option>
+                  <option>Graphics Designing & Multimedia</option>
+                  <option>Certificate in Web Designing</option>
+                  <option>C & C++ Programming</option>
+                  <option>Advance Tally Course</option>
+                  <option>Basic Computer Application</option>
+                  <option>AutoCAD Course (3 Month)</option>
+                  <option>Hardware & Repairing</option>
+                  <option>Crash Course (1-4 Weeks)</option>
+                  <option>O Level / BCA / MCA Coaching</option>
+                </>
+              )}
+              <option>Not Sure - Need Guidance</option>
+            </select>
+            <button 
+              type="submit"
+              className="hover:bg-blue-800 transition"
+              style={{ background: '#1e40af', color: 'white', padding: '16px', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: 'pointer', width: '100%' }}
+            >
+              Get Free Counseling Call →
+            </button>
+          </form>
           <p style={{ marginTop: '16px', color: '#6b7280', fontSize: '13px' }}>
             Or directly call: <a href="tel:8527208085" style={{ color: '#1e40af', fontWeight: 700 }}>8527208085</a> &nbsp;|&nbsp; Enquire on{' '}
             <a href="https://wa.me/918527208085" style={{ color: '#25d366', fontWeight: 700 }}>WhatsApp Us</a>
@@ -1172,117 +1114,30 @@ export default function HomeView({ onNavigateToCourses, onNavigateToLaptopSale, 
         </div>
       </motion.section>
 
-      {/* SECTION 10 — Local SEO & Nearby Search Optimizer */}
+      {/* SECTION 10 — Local SEO Section */}
       <motion.section 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="py-16 px-6 bg-slate-950 text-white border-t border-slate-900"
+        style={{ padding: '40px 24px', background: '#1e40af' }}
       >
-        <div className="max-w-7xl mx-auto space-y-12">
-          {/* Header */}
-          <div className="text-center space-y-4 max-w-3xl mx-auto">
-            <span className="text-blue-400 text-xs font-black uppercase tracking-[0.25em] bg-blue-950/80 border border-blue-900/50 px-4 py-1.5 rounded-full inline-block">
-              Locality Access & Search Optimization
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white leading-tight">
-              Best Computer Training Institute Near Me in South Delhi
-            </h2>
-            <p className="text-slate-400 text-sm font-medium leading-relaxed">
-              Serving students and professionals across Delhi NCR with top-tier hardware laboratories, 1:1 computer setup ratios, and government-recognized certifications. Conveniently accessible via Saket, Ambedkar Nagar, and Malviya Nagar transit hubs.
-            </p>
-          </div>
-
-          {/* Three-Column Detailed SEO Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Col 1: Nearby Localities We Serve */}
-            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl space-y-4">
-              <h3 className="text-lg font-black text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">
-                📍 Nearby Localities We Serve
-              </h3>
-              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                Students from these areas in South Delhi can easily commute to our Madangir computer center (via bus, auto, or metro):
-              </p>
-              <div className="flex flex-wrap gap-2 pt-2">
-                {[
-                  'Madangir', 'Sangam Vihar', 'Ambedkar Nagar', 'Saket', 'Khanpur', 
-                  'Govindpuri', 'Pushp Vihar', 'Tughlakabad', 'Dakshinpuri', 
-                  'Malviya Nagar', 'Deoli', 'Alaknanda', 'Kalkaji', 'Badarpur'
-                ].map((loc) => (
-                  <span 
-                    key={loc} 
-                    className="text-[11px] font-bold uppercase bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg transition"
-                  >
-                    {loc}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Col 2: Most Popular Local Search Queries */}
-            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl space-y-4">
-              <h3 className="text-lg font-black text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">
-                🔍 Popular Near-Me Queries
-              </h3>
-              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                CCT Computer Education is the top-ranked match for these active local student searches:
-              </p>
-              <div className="flex flex-col gap-2.5 text-xs text-slate-300 font-bold pt-1">
-                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  ⚡ <span className="text-slate-400 font-normal">computer courses near me</span>
-                </span>
-                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  📊 <span className="text-slate-400 font-normal">Tally Prime course with GST near me</span>
-                </span>
-                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  🐍 <span className="text-slate-400 font-normal">best Python programming institute in South Delhi</span>
-                </span>
-                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  💻 <span className="text-slate-400 font-normal">computer repairing services in Madangir Delhi</span>
-                </span>
-                <span className="flex items-center gap-2 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                  🛒 <span className="text-slate-400 font-normal">second-hand used laptop shop in Delhi</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Col 3: Why Commute to CCT Madangir? */}
-            <div className="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
-              <div className="space-y-4">
-                <h3 className="text-lg font-black text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">
-                  🏆 Why Choose CCT Delhi?
-                </h3>
-                <ul className="space-y-2.5 text-xs text-slate-300 font-semibold">
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-blue-500 text-sm">✓</span>
-                    <span><strong>1:1 Desktop Ratio</strong> — Guaranteed separate computer to practice individually on your schedule.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-blue-500 text-sm">✓</span>
-                    <span><strong>Govt Registered Certificate</strong> — Delhi Government recognized course validation to unlock corporate jobs.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-blue-500 text-sm">✓</span>
-                    <span><strong>Est. 1996 Legacy</strong> — Serving and training computer operators, developers, and accountants for 29+ years.</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 border-t border-slate-850">
-                <a 
-                  href="https://www.google.com/maps/place/CCT+Computer+Education/@28.5209673,77.2287807,17z/data=!3m1!4b1!4m6!3m5!1s0x390ce190013cb139:0xa1c2c0080c2cc2b0!8m2!3d28.5209673!4d77.2287807!16s%2Fg%2F12hn29_kr?hl=en-IN&entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition-all"
-                >
-                  📍 Open Live Navigation Route
-                </a>
-              </div>
-            </div>
-
-          </div>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', color: 'white' }}>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '12px' }} className="uppercase tracking-tight">
+            Computer Training Institute in Madangir, South Delhi
+          </h2>
+          <p style={{ color: '#bfdbfe', fontSize: '14px', lineHeight: '1.7', fontWeight: 500 }}>
+            CCT Center for Computer Training is located at DDA Flats, Madangir, New Delhi. We serve students from Madangir, Ambedkar Nagar, Sangam Vihar, Govindpuri, Khanpur, Tughlakabad, Badarpur and nearby areas of South Delhi. Best computer institute near Madangir market.
+          </p>
+          <a 
+            href="https://www.google.com/maps/place/CCT+Computer+Education/@28.5209673,77.2287807,17z/data=!3m1!4b1!4m6!3m5!1s0x390ce190013cb139:0xa1c2c0080c2cc2b0!8m2!3d28.5209673!4d77.2287807!16s%2Fg%2F12hn29_kr?hl=en-IN&entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D" 
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'inline-block', marginTop: '16px', background: 'white', color: '#1e40af', padding: '10px 24px', borderRadius: '8px', fontWeight: 700, textDecoration: 'none', fontSize: '14px' }}
+            className="hover:bg-slate-50 transition"
+          >
+            📍 Get Directions on Google Maps
+          </a>
         </div>
       </motion.section>
 

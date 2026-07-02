@@ -17,16 +17,6 @@ export default function ContactPage() {
       return;
     }
     setSuccess(true);
-    
-    // Construct WhatsApp message and redirect
-    const messageText = `Hello CCT Delhi, I would like to inquire about admission:
-*Name:* ${formData.name}
-*Contact:* ${formData.phoneOrEmail}
-*Course of Interest:* ${formData.courseInterest}
-*Message:* ${formData.message || 'No additional message'}`;
-    const encodedMessage = encodeURIComponent(messageText);
-    const whatsappUrl = `https://wa.me/918527208085?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
   };
 
   const coordinates = [
